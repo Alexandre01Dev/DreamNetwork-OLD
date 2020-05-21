@@ -1,0 +1,8 @@
+main: be.alexandre01.dreamzon.network.spigot.SpigotMain
+author: Alexandre01
+name: Network
+version: 1.0
+commands:
+  network:
+    permission: network.use
+    permission-message: §e- §9Système de Network par Alexandre01.
