@@ -28,8 +28,9 @@ public class ServerInstance {
       serverList.add(name);
     }
     public static boolean startServer(String name, String pathName, Type type,String Xms,String Xmx,int port){
-
+        updateConfigFile(pathName,name,type,Xms,Xmx,port);
         int servers = 0;
+
         for (String string : startServerList){
             if(string.startsWith(name+"-")){
 
@@ -47,6 +48,7 @@ public class ServerInstance {
             Console.print(Colors.ANSI_RED+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath());
         try {
             String finalname =  name+"-"+servers;
+
             if(type.equals(Type.DYNAMIC)){
                 if(Config.contains("temp/"+pathName+"/"+finalname+"/"+name)){
                     Config.removeDir("temp/"+pathName+"/"+finalname+"/"+name);
@@ -174,6 +176,7 @@ public class ServerInstance {
             }*/
             startServerList.add(finalname);
             processServers.put(name,proc);
+
             new Connect("localhost",port+1,"Console","8HetY4474XisrZ2FGwV5z",finalname);
             Timer timer = new Timer();
 
@@ -188,7 +191,189 @@ public class ServerInstance {
             return false;
         }
         }
+    public static void startServer(String name, String pathName){
+        Type type = null;
+        String Xms = null;
+        String Xmx = null;
+        int port = 0;
+        try {
+            for (String line : Config.getGroupsLines(System.getProperty("user.dir")+"/template/"+pathName+"/"+name+"/network.yml")){
+                if(line.startsWith("type:")){
+                    type = Type.valueOf(line.replace("type:","").replaceAll(" ",""));
+                }
+                if(line.startsWith("xms:")){
+                    Xms = line.replace("xms:","").replaceAll(" ","");
+                }
+                if(line.startsWith("xmx:")){
+                    Xmx = line.replace("xmx:","").replaceAll(" ","");
+                }
+                if(line.startsWith("port:")){
+                    port = Integer.parseInt(line.replace("port:","").replaceAll(" ",""));
+                }
+            }
+        }catch (IOException e){
+            System.out.println("Le serveur en question n'est pas encore configuré");
+            return;
+        }
+        int servers = 0;
+        for (String string : startServerList){
+            if(string.startsWith(name+"-")){
 
+                try{
+                    int num = Integer.parseInt( string.replace(name+"-",""));
+                    servers++;
+                } catch (NumberFormatException e) {
+                    System.out.println("Une erreur dans la création du serveur");
+                    return;
+                }
+            }
+        }
+
+
+        Console.print(Colors.ANSI_RED+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath());
+        try {
+            String finalname =  name+"-"+servers;
+            if(type.equals(Type.DYNAMIC)){
+                if(Config.contains("temp/"+pathName+"/"+finalname+"/"+name)){
+                    Config.removeDir("temp/"+pathName+"/"+finalname+"/"+name);
+                }
+                Config.createDir("temp/"+pathName+"/"+name+"/"+finalname);
+                Config.copy(new File(Config.getPath(new File(System.getProperty("user.dir")+ Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath())),new File(Config.getPath("temp/"+pathName+"/"+name+"/"+finalname)));
+            }
+
+
+
+
+            if(port == 0){
+
+                if(!serversPortList.isEmpty()){
+
+                    for (Integer string : serversPort.values()){
+                        System.out.println(string);
+                    }
+                    port = serversPortList.get(serversPortList.size()-1)+2;
+                    while (portsBlackList.contains(port)){
+                        port = port + 2;
+                    }
+                    if(!serversPort.isEmpty()){
+                        for(Map.Entry<String,Integer> s : serversPort.entrySet()){
+                            if(s.getKey().startsWith("cache-")){
+                                port = serversPort.get(s.getKey());
+                                serversPort.remove(s.getKey(),s.getValue());
+                                break;
+                            }
+                        }
+                    }
+
+                    System.out.println(port);
+                    if(type.equals(Type.STATIC)){
+                        changePort("/template/"+pathName,finalname,port,type);
+                    }else {
+                        if(type.equals(Type.DYNAMIC)){
+                            changePort("/temp/"+pathName,finalname,port,type);
+                        }
+                    }
+
+                    serversPortList.add(port);
+                    serversPort.put(finalname,port);
+                }else {
+                    if(type.equals(Type.STATIC)){
+                        System.out.println("template/"+pathName);
+                        port = getPort("/template/"+pathName,finalname,type);
+                    }else{
+                        if(type.equals(Type.DYNAMIC)){
+                            port = getPort("temp/"+pathName,finalname,type);
+                        }
+                    }
+
+                    System.out.println(port);
+                    serversPortList.add(port);
+                    serversPort.put(finalname,port);
+                }
+
+            }else {
+                if(!serversPortList.contains(port)){
+                    for(Map.Entry<String,Integer> s : serversPort.entrySet()){
+                        if(s.getKey().startsWith("cache-")){
+                            port = serversPort.get(s.getKey());
+                            serversPort.remove(s.getKey(),s.getValue());
+                            break;
+                        }
+                    }
+
+                    if(type.equals(Type.STATIC)){
+                        changePort("/template/"+pathName,finalname,port,type);
+                    }else {
+                        if(type.equals(Type.DYNAMIC)){
+                            changePort("/temp/"+pathName,finalname,port,type);
+                        }
+                    }
+
+                    portsBlackList.add(port);
+                    serversPort.put(finalname,port);
+                }else {
+                    System.out.println("Le port est déjà utilisé");
+                    return;
+                }
+            }
+            Process proc= null;
+            String resourcePath = null;
+            if(System.getProperty("os.name").startsWith("Windows")){
+                if(type.equals(Type.DYNAMIC)){
+                    proc = Runtime.getRuntime().exec("cmd /c start java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+Xms+" -Xmx"+Xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
+                }else {
+                    if(type.equals(Type.STATIC)){
+                        proc = Runtime.getRuntime().exec("cmd /c start java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+Xms+" -Xmx"+Xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
+                    }
+                }
+
+            }else {
+                if(type.equals(Type.DYNAMIC)){
+                    proc = Runtime.getRuntime().exec("screen -dmS "+finalname+" java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+Xms+" -Xmx"+Xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
+                }else {
+                    if(type.equals(Type.STATIC)){
+                        proc = Runtime.getRuntime().exec("screen -dmS "+finalname+" java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+Xms+" -Xmx"+Xmx+" -jar " + new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
+                    }
+                }
+
+
+            }
+
+
+
+            // Main.getInstance().processInput = new BufferedWriter(new OutputStreamWriter(proc.getOutputStream()));
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+
+            processServersInput.put(finalname,stdInput);
+            /*String s = null;
+            try {
+                System.out.println("cc1");
+                while ((s = stdInput.readLine()) != null) {
+                    System.out.println(s);
+                    System.out.println("cc");
+                }
+
+
+            }catch (Exception e){
+                System.out.println("error");
+
+            }*/
+            startServerList.add(finalname);
+            processServers.put(name,proc);
+            new Connect("localhost",port+1,"Console","8HetY4474XisrZ2FGwV5z",finalname);
+            Timer timer = new Timer();
+
+
+
+
+
+            return;
+        } catch (Exception e) {
+            System.out.println("Le serveur n'a pas pu démarré");
+            e.printStackTrace();
+            return;
+        }
+    }
 
     public static void stopServer(String name, String pathName){
         String finalName = name.split("-")[0];
@@ -432,6 +617,69 @@ public class ServerInstance {
             System.out.println("Problem reading file.");
         }
         return;
+    }
+    public static void updateConfigFile(String pathName,String finalName, Type type, String Xms, String Xmx, int port){
+        Type oldType = null;
+        String oldXms = null;
+        String oldXmx = null;
+        int oldPort = 0;
+        System.out.println(System.getProperty("user.dir")+"/template/"+pathName+"/"+finalName+"/network.yml");
+      Config.createFile((System.getProperty("user.dir")+"/template/"+pathName+"/"+finalName+"/network.yml"));
+        try {
+            for (String line : Config.getGroupsLines(System.getProperty("user.dir")+"/template/"+pathName+"/"+finalName+"/network.yml")){
+                if(line.startsWith("type:")){
+                    oldType = Type.valueOf(line.replace("type:","").replaceAll(" ",""));
+                }
+                if(line.startsWith("xms:")){
+                    oldXms = line.replace("xms:","").replaceAll(" ","");
+                }
+                if(line.startsWith("xmx:")){
+                    oldXmx = line.replace("xmx:","").replaceAll(" ","");
+                }
+                if(line.startsWith("port:")){
+                    oldPort = Integer.parseInt(line.replace("xmx:","").replaceAll(" ",""));
+                }
+            }
+                PrintWriter writer = new PrintWriter(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+finalName+"/network.yml"),"utf-8");
+               System.out.println(type.name());
+               System.out.println(Xmx);
+                System.out.println(Xms);
+                System.out.println(port);
+                if(type == null){
+                    type = oldType;
+                }
+                if(type != null){
+                    writer.println("type: "+type.name());
+                }
+                
+                if(Xms == null){
+                    Xms = oldXms;
+                }
+                
+                if(Xms != null){
+                    writer.println("xms: "+Xms);
+                }
+
+                if(Xmx == null){
+                    Xmx = oldXmx;
+                }
+                
+                if(Xmx != null){
+                    writer.println("xmx: "+Xmx);
+                }
+             
+                if(port == 0){
+                    port = oldPort;
+                }
+                if(port != 0){
+                    writer.println("port: "+port);
+                }
+                writer.close();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -5,7 +5,10 @@ import be.alexandre01.dreamzon.network.spigot.api.NetworkSpigotAPI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class NetworkCommand implements CommandExecutor {
     @Override
@@ -35,6 +38,14 @@ public class NetworkCommand implements CommandExecutor {
                             player.sendMessage("§e - §9/network cmd [SERVER] [COMMANDS]");
                         }
 
+                    }
+                    if(args[0].equalsIgnoreCase("gui")){
+
+                    }
+                    if(args[0].equalsIgnoreCase("getServers")){
+                        for (String server : NetworkSpigotAPI.getServers()){
+                            player.sendMessage("- "+server);
+                        }
                     }
                     if(args[0].equalsIgnoreCase("slot")){
                             if(args.length >= 2){
@@ -94,4 +105,6 @@ public class NetworkCommand implements CommandExecutor {
         }
         return false;
     }
+
+
 }

@@ -18,6 +18,14 @@ public class Add implements CommandsExecutor{
         BufferedWriter processInput = null;
         if(args[0].equalsIgnoreCase("add")){
             clearConsole();
+            if(args.length == 3){
+                if(args[1].equalsIgnoreCase("server")||args[1].equalsIgnoreCase("proxy")){
+                    if(Config.contains("template/"+args[1]+"/"+args[2])){
+                        ServerInstance.startServer(args[2],args[1]);
+                    }
+
+                }
+            }
             if(args.length >= 5){
                  if(args[1].equalsIgnoreCase("server")||args[1].equalsIgnoreCase("proxy")){
                      if(Config.contains("template/"+args[1]+"/"+args[2])){

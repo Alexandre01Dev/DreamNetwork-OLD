@@ -1,6 +1,7 @@
 package be.alexandre01.dreamzon.network;
 
 import java.io.*;
+import java.util.ArrayList;
 
 public class Config {
     public static String getPath(String path){
@@ -35,6 +36,29 @@ public class Config {
             }
             if(result) {
                 System.out.println("DIR created");
+            }
+        }
+    }
+    public static void createFile(String path){
+        File theDir = new File(getPath(path));
+
+        if (!theDir.exists()) {
+            System.out.println("creating file... " + theDir.getName());
+            boolean result = false;
+
+            try{
+                try {
+                    theDir.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                result = true;
+            }
+            catch(SecurityException se){
+                //handle it
+            }
+            if(result) {
+                System.out.println("FILE created");
             }
         }
     }
@@ -86,5 +110,35 @@ public class Config {
             }
         }
     }
+    public static String pathConvert(String path){
+        if(System.getProperty("os.name").startsWith("Windows")){
+            return path.replaceAll("/","\\\\");
+        }else {
+            return path;
+        }
 
+    }
+    public static ArrayList<String> getGroupsLines(String file)throws IOException{
+        String fileSeparator = System.getProperty("file.separator");
+        File serverFile = new File(pathConvert(file));
+        BufferedReader br = new BufferedReader(new FileReader(serverFile.getAbsolutePath()));
+        try {
+
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            ArrayList<String> lines = new ArrayList<>();
+            while (line != null) {
+                lines.add(line);
+                line = br.readLine();
+            }
+            return lines;
+
+
+        } finally {
+            br.close();
+        }
+
+
+    }
 }

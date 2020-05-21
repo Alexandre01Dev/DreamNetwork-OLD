@@ -3,6 +3,8 @@ package be.alexandre01.dreamzon.network.spigot;
 import be.alexandre01.dreamzon.network.spigot.api.NetworkSpigotAPI;
 import be.alexandre01.dreamzon.network.spigot.api.ReloadEvent;
 import be.alexandre01.dreamzon.network.spigot.commands.NetworkCommand;
+import be.alexandre01.dreamzon.network.spigot.commands.gui.InventoryEvent;
+import be.alexandre01.dreamzon.network.spigot.commands.gui.InventoryManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,14 +16,19 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 
 public class SpigotMain extends JavaPlugin implements Listener {
+    public static SpigotMain instance;
     private boolean playerReloading = false;
+    public InventoryManager inventoryManager;
     private boolean consoleReloading = false;
     public static boolean isReloading = false;
     @Override
     public void onEnable(){
+        instance = this;
+        inventoryManager = new InventoryManager();
         System.out.println(Bukkit.getPort());
         Server.startServer();
         getServer().getPluginManager().registerEvents(this,this);
+        getServer().getPluginManager().registerEvents(new InventoryEvent(inventoryManager),this);
         getCommand("network").setExecutor(new NetworkCommand());
     }
 
