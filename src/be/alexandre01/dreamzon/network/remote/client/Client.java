@@ -115,6 +115,9 @@ public class Client{
         }
         if(data.startsWith("START;")){
             String[] args =data.replaceAll(" ","").split(";");
+            if(args.length > 2){
+
+            }
         String serverName = args[1];
         String type = args[2];
         String Xms = args[3];

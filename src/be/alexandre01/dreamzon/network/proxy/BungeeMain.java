@@ -37,6 +37,8 @@ public class BungeeMain  extends Plugin implements Listener {
     public static BungeeMain instance;
     public int slot = -2;
     public static File file;
+    public String lobby;
+    public boolean connexionOnLobby;
     public static Configuration configuration;
     private ArrayList<Integer> acceptedversion;
     private ScheduledTask task;
@@ -80,7 +82,17 @@ public class BungeeMain  extends Plugin implements Listener {
 
             }
         },0,3,TimeUnit.SECONDS);
+        if(!configuration.contains("network.lobby")){
+            configuration.set("network.lobby","hub");
+            saveConfig();
+        }
+        lobby = configuration.getString("network.lobby");
 
+        if(!configuration.contains("network.connexionOnLobby")){
+            configuration.set("network.connexionOnLobby",true);
+            saveConfig();
+        }
+        connexionOnLobby = configuration.getBoolean("network.connexionOnLobby");
     }
     @Override
     public void onDisable() {
@@ -93,13 +105,14 @@ public class BungeeMain  extends Plugin implements Listener {
     private boolean isPending(UUID uuid) {
         return pending.contains(uuid);
     }
-    /*@EventHandler
+    @EventHandler
     public void onPlayerConnect(PostLoginEvent event) {
         pending.add(event.getPlayer().getUniqueId());
-    }*/
+    }
 
-   /* @EventHandler
+    @EventHandler
     public void onServerConnect(ServerConnectEvent event) {
+        if(connexionOnLobby)
         if (! isPending(event.getPlayer().getUniqueId())) {
             return;
         }
@@ -113,7 +126,7 @@ public class BungeeMain  extends Plugin implements Listener {
 
 
 
-    }*/
+    }
 
     @EventHandler
     public void onServerKick(ServerKickEvent event) {
@@ -134,9 +147,9 @@ public class BungeeMain  extends Plugin implements Listener {
                     event.setCancelled(true);
                 }
             }
-
             updateTab(event.getPlayer(),1);
         }
+
 
     }
     public ServerInfo getLobby(){
@@ -146,7 +159,7 @@ public class BungeeMain  extends Plugin implements Listener {
         boolean isFound = false;
         for (String str : ProxyInstance.servers){
             System.out.println(str);
-            if(str.toLowerCase().startsWith("hub")){
+            if(str.toLowerCase().startsWith(lobby)){
                 i = Integer.parseInt(str.split("-")[1]);
                 word = str.split("-")[0];
                 ServerInfo serverInfo = getProxy().getServerInfo(str);
@@ -266,7 +279,7 @@ public class BungeeMain  extends Plugin implements Listener {
         srvPing.setDescriptionComponent(component);
         String address = e.getConnection().getAddress().toString().substring(1).split(":")[0].replace(".","-");
 
-        if(!ProxyInstance.servers.contains("hub-0")){
+        if(!ProxyInstance.servers.contains(lobby+"-0")){
             ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 
             try {

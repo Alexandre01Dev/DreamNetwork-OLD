@@ -11,6 +11,9 @@ public class NetworkSpigotAPI {
     public static void startServer(String name, Type type, String Xms, String Xmx){
         Server.getServer().sendData("START;"+name+";"+type.name()+";"+Xms+";"+Xmx+";"+0);
     }
+    public static void startServer(String name){
+        Server.getServer().sendData("START;"+name);
+    }
     public static void startServer(String name, Type type, String Xms, String Xmx,int port){
         Server.getServer().sendData("START;"+name+";"+type.name()+";"+Xms+";"+Xmx+";"+port);
     }

@@ -1,6 +1,7 @@
 package be.alexandre01.dreamzon.network.utils;
 
 import be.alexandre01.dreamzon.network.Config;
+import be.alexandre01.dreamzon.network.Main;
 import be.alexandre01.dreamzon.network.enums.Type;
 import be.alexandre01.dreamzon.network.remote.client.Connect;
 
@@ -29,8 +30,18 @@ public class ServerInstance {
     }
     public static boolean startServer(String name, String pathName, Type type,String Xms,String Xmx,int port){
         updateConfigFile(pathName,name,type,Xms,Xmx,port);
+        boolean proxy;
         int servers = 0;
+        if(pathName.contains("server")){
+        proxy = false;
+        }else {
+            proxy = true;
+        }
 
+        if(Main.getInstance().getProxy() == null && !proxy){
+            Console.print(Colors.ANSI_RED+"Veuillez d'abord allumer le Proxy avant d'ouvir un Serveur.");
+            return false;
+        }
         for (String string : startServerList){
             if(string.startsWith(name+"-")){
 
@@ -192,6 +203,18 @@ public class ServerInstance {
         }
         }
     public static void startServer(String name, String pathName){
+        boolean proxy;
+        int servers = 0;
+        if(pathName.contains("server")){
+            proxy = false;
+        }else {
+            proxy = true;
+        }
+
+        if(Main.getInstance().getProxy() == null && !proxy){
+            Console.print(Colors.ANSI_RED+"Veuillez d'abord allumer le Proxy avant d'ouvir un Serveur.");
+            return;
+        }
         Type type = null;
         String Xms = null;
         String Xmx = null;
@@ -215,7 +238,7 @@ public class ServerInstance {
             System.out.println("Le serveur en question n'est pas encore configuré");
             return;
         }
-        int servers = 0;
+
         for (String string : startServerList){
             if(string.startsWith(name+"-")){
 
@@ -619,57 +642,23 @@ public class ServerInstance {
         return;
     }
     public static void updateConfigFile(String pathName,String finalName, Type type, String Xms, String Xmx, int port){
-        Type oldType = null;
-        String oldXms = null;
-        String oldXmx = null;
         int oldPort = 0;
         System.out.println(System.getProperty("user.dir")+"/template/"+pathName+"/"+finalName+"/network.yml");
       Config.createFile((System.getProperty("user.dir")+"/template/"+pathName+"/"+finalName+"/network.yml"));
         try {
-            for (String line : Config.getGroupsLines(System.getProperty("user.dir")+"/template/"+pathName+"/"+finalName+"/network.yml")){
-                if(line.startsWith("type:")){
-                    oldType = Type.valueOf(line.replace("type:","").replaceAll(" ",""));
-                }
-                if(line.startsWith("xms:")){
-                    oldXms = line.replace("xms:","").replaceAll(" ","");
-                }
-                if(line.startsWith("xmx:")){
-                    oldXmx = line.replace("xmx:","").replaceAll(" ","");
-                }
-                if(line.startsWith("port:")){
-                    oldPort = Integer.parseInt(line.replace("xmx:","").replaceAll(" ",""));
-                }
-            }
                 PrintWriter writer = new PrintWriter(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+finalName+"/network.yml"),"utf-8");
                System.out.println(type.name());
                System.out.println(Xmx);
                 System.out.println(Xms);
                 System.out.println(port);
-                if(type == null){
-                    type = oldType;
-                }
                 if(type != null){
                     writer.println("type: "+type.name());
                 }
-                
-                if(Xms == null){
-                    Xms = oldXms;
-                }
-                
                 if(Xms != null){
                     writer.println("xms: "+Xms);
                 }
-
-                if(Xmx == null){
-                    Xmx = oldXmx;
-                }
-                
                 if(Xmx != null){
                     writer.println("xmx: "+Xmx);
-                }
-             
-                if(port == 0){
-                    port = oldPort;
                 }
                 if(port != 0){
                     writer.println("port: "+port);

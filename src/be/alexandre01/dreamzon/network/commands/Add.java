@@ -6,6 +6,7 @@ import be.alexandre01.dreamzon.network.enums.Type;
 import be.alexandre01.dreamzon.network.utils.Colors;
 import be.alexandre01.dreamzon.network.utils.Console;
 import be.alexandre01.dreamzon.network.utils.ServerInstance;
+import net.md_5.bungee.api.config.ServerInfo;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -17,43 +18,40 @@ public class Add implements CommandsExecutor{
 
         BufferedWriter processInput = null;
         if(args[0].equalsIgnoreCase("add")){
-            clearConsole();
-            if(args.length == 3){
-                if(args[1].equalsIgnoreCase("server")||args[1].equalsIgnoreCase("proxy")){
-                    if(Config.contains("template/"+args[1]+"/"+args[2])){
-                        ServerInstance.startServer(args[2],args[1]);
-                    }
-
-                }
-            }
             if(args.length >= 5){
-                 if(args[1].equalsIgnoreCase("server")||args[1].equalsIgnoreCase("proxy")){
-                     if(Config.contains("template/"+args[1]+"/"+args[2])){
-
-                         if(args.length == 7){
-                             try {
-                                 if(args[3].equalsIgnoreCase("STATIC")){
-                                     ServerInstance.startServer(args[2],args[1], Type.STATIC,args[4],args[5], Integer.parseInt(args[6]));
-                                 }else {
-                                     if(args[3].equalsIgnoreCase("DYNAMIC")){
-                                         ServerInstance.startServer(args[2],args[1], Type.DYNAMIC,args[4],args[5],Integer.parseInt(args[6]));
-                                     }
+                 if(args[1].equalsIgnoreCase("server")||args[1].equalsIgnoreCase("proxy")){ {
+                         if(args[3].equalsIgnoreCase("STATIC")){
+                             Config.createDir("template/"+args[1]+"/"+args[2]);
+                             if(args.length == 7){
+                                 try {
+                                     ServerInstance.updateConfigFile(args[1],args[2],Type.STATIC,args[4],args[5],Integer.parseInt(args[6]));
+                                 }catch (Exception e){
+                                     Console.print(Colors.ANSI_RED+"Une erreur c'est produite, certainement car vous avez mal noté le port");
                                  }
-                             }catch (Exception e){
-                                 System.out.println("Veuillez marquer le port en chiffre");
-                             }
-                         }else {
-                             if(args[3].equalsIgnoreCase("STATIC")){
-                                 ServerInstance.startServer(args[2],args[1], Type.STATIC,args[4],args[5],0);
                              }else {
-                                 if(args[3].equalsIgnoreCase("DYNAMIC")){
-                                     ServerInstance.startServer(args[2],args[1], Type.DYNAMIC,args[4],args[5],0);
+                                 ServerInstance.updateConfigFile(args[1],args[2],Type.STATIC,args[4],args[5],0);
+                             }
+
+                         }else {
+                             if(args[3].equalsIgnoreCase("DYNAMIC")){
+                                 Config.createDir("template/"+args[1]+"/"+args[2]);
+                                 if(args.length == 7){
+                                     try {
+                                         ServerInstance.updateConfigFile(args[1],args[2],Type.DYNAMIC,args[4],args[5],Integer.parseInt(args[6]));
+                                     }catch (Exception e){
+                                         Console.print(Colors.ANSI_RED+"Une erreur c'est produite, certainement car vous avez mal noté le port");
+                                     }
+
+                                 }else {
+                                     ServerInstance.updateConfigFile(args[1],args[2],Type.DYNAMIC,args[4],args[5],0);
                                  }
+                             }else {
+                                 Console.print(Colors.ANSI_RED+"[!] add server [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ");
+                                 Console.print(Colors.ANSI_RED+"[!] add proxy [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ");
                              }
                          }
 
-                     }else {
-                         Config.createDir("template/"+args[1]+"/"+args[2]);
+
                      }
 
 
