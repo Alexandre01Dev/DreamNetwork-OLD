@@ -8,7 +8,7 @@ public class Crypter {
         try{
             return Base64.getEncoder().encodeToString(value.getBytes());
         }catch (Exception e){
-            System.out.println("FAIL DANS L'ENCRYPTION");
+            System.out.println("FAIL DANS LE CHIFFREMENT");
             return null;
         }
     }
@@ -17,7 +17,7 @@ public class Crypter {
             byte[] decodedvalue =  Base64.getDecoder().decode(value);
             return new String(decodedvalue);
         }catch (Exception e){
-            System.out.println("Fail dans le décryptage de ");
+            System.out.println("Fail dans le chiffrement de ");
             return null;
         }
     }
