@@ -118,6 +118,7 @@ public class Config {
         }
 
     }
+
     public static ArrayList<String> getGroupsLines(String file)throws IOException{
         String fileSeparator = System.getProperty("file.separator");
         File serverFile = new File(pathConvert(file));

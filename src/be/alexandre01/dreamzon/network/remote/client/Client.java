@@ -194,8 +194,20 @@ public class Client{
 
         }
         if(data.startsWith("GETPROXY;")){
-            if(data.replaceAll("GETPROXY;","").startsWith("SLOT;")){
+            String subdata = data.replaceAll("GETPROXY;","");
+
+            if(subdata.startsWith("SLOT;")){
                 Main.getInstance().getProxy().sendData("SLOT;"+ data.replaceAll("GETPROXY;SLOT;",""));
+            }
+            if(subdata.startsWith("MAINTENANCE;")){
+                Main.getInstance().getProxy().sendData(data.replace("GETPROXY;",""));
+                Boolean.parseBoolean(subdata.replace("MAINTENANCE;",""));
+            }
+            if(subdata.startsWith("ADDMAINTENANCE")){
+                Main.getInstance().getProxy().sendData(data.replace("GETPROXY;",""));
+            }
+            if(subdata.startsWith("REMMAINTENANCE")){
+                Main.getInstance().getProxy().sendData(data.replace("GETPROXY;",""));
             }
         }
         System.out.println("["+getProcessName()+"] "+data);
@@ -204,6 +216,7 @@ public class Client{
             System.out.println("SEND !");
             Main.getInstance().getProxy().sendData("START;"+processName+";"+client.getInetAddress().getHostAddress()+";"+(client.getPort()-1)+";"+ motd);
         }
+
     }
     public void sendData(String data){
             data = Crypter.encode(data);

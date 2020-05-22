@@ -2,6 +2,7 @@ package be.alexandre01.dreamzon.network.spigot.api;
 
 import be.alexandre01.dreamzon.network.enums.Type;
 import be.alexandre01.dreamzon.network.spigot.Server;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 
@@ -31,6 +32,17 @@ public class NetworkSpigotAPI {
     public static void restartServer(String name, Type type, String Xms, String Xmx){
         Server.getServer().sendData("RESTART;"+name+";"+type.name()+";"+Xms+";"+Xmx);
     }
+
+    public static void setMaintenance(boolean isMaintenance){
+        Server.getServer().sendData("GETPROXY;MAINTENANCE;"+isMaintenance);
+    }
+    public static void addPlayerFromMaintenance(String playerName){
+        Server.getServer().sendData("GETPROXY;ADDMAINTENANCE;"+playerName);
+    }
+    public static void remPlayerFromMaintenance(String playerName){
+        Server.getServer().sendData("GETPROXY;REMMAINTENANCE;"+playerName);
+    }
+
 
     public static ArrayList<String> getTemplateServers() {
         return templateServers;

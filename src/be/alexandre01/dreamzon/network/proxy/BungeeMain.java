@@ -36,6 +36,8 @@ public class BungeeMain  extends Plugin implements Listener {
     private Set<UUID> pending;
     public static BungeeMain instance;
     public int slot = -2;
+    public boolean isMaintenance;
+    public List<String> allowedPlayer;
     public static File file;
     public String lobby;
     public boolean connexionOnLobby;
@@ -93,6 +95,22 @@ public class BungeeMain  extends Plugin implements Listener {
             saveConfig();
         }
         connexionOnLobby = configuration.getBoolean("network.connexionOnLobby");
+
+
+        if(!configuration.contains("network.maintenance")){
+            configuration.set("network.maintenance",false);
+            saveConfig();
+        }
+        isMaintenance = configuration.getBoolean("network.maintenance");
+
+        if(!configuration.contains("network.allowed-players-maintenance")){
+            configuration.set("network.allowed-players-maintenance",new ArrayList<>());
+            saveConfig();
+        }
+        for(String string : configuration.getStringList("network.allowed-players-maintenance")){
+            allowedPlayer.add(string.toLowerCase());
+        }
+
     }
     @Override
     public void onDisable() {
@@ -107,12 +125,15 @@ public class BungeeMain  extends Plugin implements Listener {
     }
     @EventHandler
     public void onPlayerConnect(PostLoginEvent event) {
-        pending.add(event.getPlayer().getUniqueId());
+        if(connexionOnLobby){
+            pending.add(event.getPlayer().getUniqueId());
+        }
     }
 
     @EventHandler
     public void onServerConnect(ServerConnectEvent event) {
-        if(connexionOnLobby)
+        if(connexionOnLobby){
+
         if (! isPending(event.getPlayer().getUniqueId())) {
             return;
         }
@@ -124,6 +145,7 @@ public class BungeeMain  extends Plugin implements Listener {
         event.setTarget(info);
         pending.remove(player.getUniqueId());
 
+        }
 
 
     }
@@ -147,8 +169,24 @@ public class BungeeMain  extends Plugin implements Listener {
                     event.setCancelled(true);
                 }
             }
+            if(isMaintenance){
+                if(!allowedPlayer.contains(event.getPlayer().getName().toLowerCase()) && !event.getPlayer().hasPermission("network.maintenance.bypass")){
+                    event.getPlayer().disconnect(new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\n§cServeur en maintenance!"),new TextComponent("\n\n§eVeuillez réessayer plus tard\n"),new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\nplay.octosia.fr\nNetwork System by Alexandre01"));
+                    event.setCancelled(true);
+                }
+            }
+            updateTab(event.getPlayer(),1);
+        }else {
+            if(isMaintenance){
+                if(!allowedPlayer.contains(event.getPlayer().getName().toLowerCase()) && !event.getPlayer().hasPermission("network.maintenance.bypass")){
+                    event.getPlayer().disconnect(new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\n§cServeur en maintenance!"),new TextComponent("\n\n§eVeuillez réessayer plus tard\n"),new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\nplay.octosia.fr\nNetwork System by Alexandre01"));
+                    event.setCancelled(true);
+                }
+            }
             updateTab(event.getPlayer(),1);
         }
+
+
 
 
     }
@@ -267,7 +305,7 @@ public class BungeeMain  extends Plugin implements Listener {
             srvPing.setPlayers(new ServerPing.Players(players.getOnline()+1,players.getOnline(),players.getSample()));
         }
 
-        version.setName("§6Gladia§eFaction §7[§e1.8 §f-> §61.12.2§7]");
+        version.setName("§6Octosia §7[§e1.8 §f-> §61.12.2§7]");
         if(!acceptedversion.contains(e.getConnection().getVersion())){
             version.setProtocol(999);
         }
@@ -280,22 +318,25 @@ public class BungeeMain  extends Plugin implements Listener {
         String address = e.getConnection().getAddress().toString().substring(1).split(":")[0].replace(".","-");
 
         if(!ProxyInstance.servers.contains(lobby+"-0")){
-            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-
             try {
-
                 srvPing.setFavicon( Favicon.create(ImageIO.read(Main.class.getResourceAsStream("ressources/down.png"))));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
 
         }else {
-            try {
-                ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-                InputStream is = classloader.getResourceAsStream("open.png");
-                srvPing.setFavicon( Favicon.create(ImageIO.read(Main.class.getResourceAsStream("ressources/open.png"))));
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            if(isMaintenance){
+                try {
+                    srvPing.setFavicon( Favicon.create(ImageIO.read(Main.class.getResourceAsStream("ressources/maintenance.png"))));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }else{
+                try {
+                    srvPing.setFavicon( Favicon.create(ImageIO.read(Main.class.getResourceAsStream("ressources/open.png"))));
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
 
         }

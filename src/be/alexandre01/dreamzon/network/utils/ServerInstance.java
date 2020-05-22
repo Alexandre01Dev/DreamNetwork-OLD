@@ -642,15 +642,10 @@ public class ServerInstance {
         return;
     }
     public static void updateConfigFile(String pathName,String finalName, Type type, String Xms, String Xmx, int port){
-        int oldPort = 0;
-        System.out.println(System.getProperty("user.dir")+"/template/"+pathName+"/"+finalName+"/network.yml");
       Config.createFile((System.getProperty("user.dir")+"/template/"+pathName+"/"+finalName+"/network.yml"));
         try {
                 PrintWriter writer = new PrintWriter(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+finalName+"/network.yml"),"utf-8");
                System.out.println(type.name());
-               System.out.println(Xmx);
-                System.out.println(Xms);
-                System.out.println(port);
                 if(type != null){
                     writer.println("type: "+type.name());
                 }

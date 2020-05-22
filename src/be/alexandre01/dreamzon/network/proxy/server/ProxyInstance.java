@@ -1,5 +1,6 @@
 package be.alexandre01.dreamzon.network.proxy.server;
 
+import be.alexandre01.dreamzon.network.proxy.BungeeMain;
 import be.alexandre01.dreamzon.network.spigot.server.Server;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.ProxyServer;
@@ -32,4 +33,5 @@ public class ProxyInstance {
         ProxyServer.getInstance().getServers().remove(finalname);
         servers.remove(finalname);
     }
+
 }

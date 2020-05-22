@@ -5,6 +5,7 @@ import be.alexandre01.dreamzon.network.spigot.WaitForConnection;
 import be.alexandre01.dreamzon.network.utils.Crypter;
 import be.alexandre01.dreamzon.network.utils.Utils;
 import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.bukkit.Bukkit;
 
@@ -56,7 +57,7 @@ public class ReadData extends Thread{
                     System.out.println("Remote failed: Error #3");
                 }
                 for(ProxiedPlayer player : BungeeCord.getInstance().getPlayers()){
-                    player.disconnect("§cLe Network vient de se stopper. Désolé du dérangement");
+                    player.disconnect(new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\n§cLe Network vient de se stopper. Désolé du dérangement"),new TextComponent("\n\n§eVeuillez réessayer plus tard\n"),new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\nplay.octosia.fr\nNetwork System by Alexandre01"));
                 }
                 BungeeCord.getInstance().stop();
 

@@ -100,6 +100,33 @@ public class Proxy {
                         }
 
                     }
+            if(data.startsWith("MAINTENANCE;")){
+                try{
+                    BungeeMain.instance.isMaintenance   = Boolean.parseBoolean(data.replace("MAINTENANCE;","").replaceAll(" ",""));
+                    BungeeMain.configuration.set("network.maintenance",BungeeMain.instance.isMaintenance);
+                    BungeeMain.instance.saveConfig();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+            if(data.startsWith("ADDMAINTENANCE;")){
+                System.out.println(data+"...");
+                String playername = data.replace("ADDMAINTENANCE;","").replaceAll(" ","").toLowerCase();
+                if(!BungeeMain.instance.allowedPlayer.contains(playername)){
+                    BungeeMain.instance.allowedPlayer.add(playername);
+                    BungeeMain.configuration.set("network.allowed-players-maintenance",BungeeMain.instance.allowedPlayer);
+                    BungeeMain.instance.saveConfig();
+                }
+            }
+            if(data.startsWith("REMMAINTENANCE;")){
+                String playername = data.replace("REMMAINTENANCE;","").replaceAll(" ","").toLowerCase();
+                if(BungeeMain.instance.allowedPlayer.contains(playername)){
+                    BungeeMain.instance.allowedPlayer.remove(playername);
+                    BungeeMain.configuration.set("network.allowed-players-maintenance",BungeeMain.instance.allowedPlayer);
+                    BungeeMain.instance.saveConfig();
+                }
+            }
                    if (data.startsWith("NAME")){
                    String[] splitter =data.replace("NAME","").split(";");
                     name = splitter[1];
@@ -200,4 +227,5 @@ public class Proxy {
     public void setAuth(boolean isAuth){
         this.isAuth = isAuth;
     }
+
 }
