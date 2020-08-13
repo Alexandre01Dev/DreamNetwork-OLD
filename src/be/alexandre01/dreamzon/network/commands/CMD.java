@@ -4,6 +4,9 @@ import be.alexandre01.dreamzon.network.Main;
 import be.alexandre01.dreamzon.network.remote.client.Client;
 import be.alexandre01.dreamzon.network.utils.Colors;
 import be.alexandre01.dreamzon.network.utils.Console;
+import be.alexandre01.dreamzon.network.utils.Message;
+
+import java.util.logging.Level;
 
 public class CMD implements CommandsExecutor{
 
@@ -23,10 +26,10 @@ public class CMD implements CommandsExecutor{
 
 
 
-             client.sendData("CMD;"+sb.toString());
+             client.sendData(new Message().set("CMD",sb.toString()));
             System.out.println(sb.toString());
             }else {
-                Console.print(Colors.ANSI_RED+"Veuillez préciser le serveur");
+                Console.print(Colors.ANSI_RED()+"Veuillez préciser le serveur", Level.WARNING);
             }
          }else {
              System.out.println("Vous n'avez pas de serveur connecté");

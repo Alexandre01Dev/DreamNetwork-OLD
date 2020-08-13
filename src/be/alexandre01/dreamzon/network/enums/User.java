@@ -1,10 +1,5 @@
 package be.alexandre01.dreamzon.network.enums;
 
-import be.alexandre01.dreamzon.network.utils.Crypter;
-import org.bukkit.permissions.Permission;
-
-import java.util.Enumeration;
-
 public enum User {
     Console("Console","8HetY4474XisrZ2FGwV5z" ,Permissions.ADMIN);
 

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
+import java.util.logging.Level;
 
 public class ServerInstance {
     private static ArrayList<String> serverList = new ArrayList<>();
@@ -39,7 +40,7 @@ public class ServerInstance {
         }
 
         if(Main.getInstance().getProxy() == null && !proxy){
-            Console.print(Colors.ANSI_RED+"Veuillez d'abord allumer le Proxy avant d'ouvir un Serveur.");
+            Console.print(Colors.ANSI_RED()+"Veuillez d'abord allumer le Proxy avant d'ouvir un Serveur.", Level.INFO);
             return false;
         }
         for (String string : startServerList){
@@ -49,14 +50,14 @@ public class ServerInstance {
                     int num = Integer.parseInt( string.replace(name+"-",""));
                     servers++;
                 } catch (NumberFormatException e) {
-                    System.out.println("Une erreur dans la création du serveur");
+                  Console.print("Une erreur dans la création du serveur",Level.WARNING);
                    return false;
                 }
             }
         }
 
-
-            Console.print(Colors.ANSI_RED+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath());
+        Console.print("");
+        // Console.print(Colors.ANSI_RED+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath(), Level.INFO);
         try {
             String finalname =  name+"-"+servers;
 
@@ -76,7 +77,7 @@ public class ServerInstance {
             if(!serversPortList.isEmpty()){
 
                     for (Integer string : serversPort.values()){
-                        System.out.println(string);
+                        //System.out.println(string);
                     }
                     port = serversPortList.get(serversPortList.size()-1)+2;
                     while (portsBlackList.contains(port)){
@@ -92,7 +93,7 @@ public class ServerInstance {
                 }
             }
 
-                    System.out.println(port);
+                   // System.out.println(port);
                 if(type.equals(Type.STATIC)){
                     changePort("/template/"+pathName,finalname,port,type);
                 }else {
@@ -105,7 +106,7 @@ public class ServerInstance {
                     serversPort.put(finalname,port);
                 }else {
                 if(type.equals(Type.STATIC)){
-                    System.out.println("template/"+pathName);
+                  //  System.out.println("template/"+pathName);
                     port = getPort("/template/"+pathName,finalname,type);
                 }else{
                     if(type.equals(Type.DYNAMIC)){
@@ -113,7 +114,7 @@ public class ServerInstance {
                     }
                 }
 
-                     System.out.println(port);
+                  //   System.out.println(port);
                     serversPortList.add(port);
                     serversPort.put(finalname,port);
                 }
@@ -139,7 +140,7 @@ public class ServerInstance {
                     portsBlackList.add(port);
                     serversPort.put(finalname,port);
                 }else {
-                    System.out.println("Le port est déjà utilisé");
+                    Console.print("Le port est déjà utilisé",Level.WARNING);
                     return false;
                 }
             }
@@ -165,8 +166,9 @@ public class ServerInstance {
 
 
             }
+            Console.print(Colors.ANSI_GREEN()+"Le serveur viens de démarrer le processus",Level.INFO);
 
-
+             Console.print("Chemins d'accès : "+Colors.ANSI_RESET()+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath(), Level.INFO);
 
            // Main.getInstance().processInput = new BufferedWriter(new OutputStreamWriter(proc.getOutputStream()));
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -197,7 +199,7 @@ public class ServerInstance {
 
             return true;
         } catch (Exception e) {
-            System.out.println("Le serveur n'a pas pu démarré");
+            Console.print("Le serveur n'a pas pu démarré",Level.WARNING);
             e.printStackTrace();
             return false;
         }
@@ -212,7 +214,7 @@ public class ServerInstance {
         }
 
         if(Main.getInstance().getProxy() == null && !proxy){
-            Console.print(Colors.ANSI_RED+"Veuillez d'abord allumer le Proxy avant d'ouvir un Serveur.");
+            Console.print(Colors.ANSI_RED()+"Veuillez d'abord allumer le Proxy avant d'ouvir un Serveur.", Level.INFO);
             return;
         }
         Type type = null;
@@ -235,7 +237,7 @@ public class ServerInstance {
                 }
             }
         }catch (IOException e){
-            System.out.println("Le serveur en question n'est pas encore configuré");
+           Console.print("Le serveur en question n'est pas encore configuré",Level.WARNING);
             return;
         }
 
@@ -253,7 +255,7 @@ public class ServerInstance {
         }
 
 
-        Console.print(Colors.ANSI_RED+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath());
+     //   Console.print(Colors.ANSI_RED+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath(), Level.INFO);
         try {
             String finalname =  name+"-"+servers;
             if(type.equals(Type.DYNAMIC)){
@@ -272,7 +274,7 @@ public class ServerInstance {
                 if(!serversPortList.isEmpty()){
 
                     for (Integer string : serversPort.values()){
-                        System.out.println(string);
+                        //System.out.println(string);
                     }
                     port = serversPortList.get(serversPortList.size()-1)+2;
                     while (portsBlackList.contains(port)){
@@ -288,7 +290,7 @@ public class ServerInstance {
                         }
                     }
 
-                    System.out.println(port);
+                 //   System.out.println(port);
                     if(type.equals(Type.STATIC)){
                         changePort("/template/"+pathName,finalname,port,type);
                     }else {
@@ -301,7 +303,7 @@ public class ServerInstance {
                     serversPort.put(finalname,port);
                 }else {
                     if(type.equals(Type.STATIC)){
-                        System.out.println("template/"+pathName);
+                       // System.out.println("template/"+pathName);
                         port = getPort("/template/"+pathName,finalname,type);
                     }else{
                         if(type.equals(Type.DYNAMIC)){
@@ -309,7 +311,7 @@ public class ServerInstance {
                         }
                     }
 
-                    System.out.println(port);
+                    //System.out.println(port);
                     serversPortList.add(port);
                     serversPort.put(finalname,port);
                 }
@@ -335,7 +337,7 @@ public class ServerInstance {
                     portsBlackList.add(port);
                     serversPort.put(finalname,port);
                 }else {
-                    System.out.println("Le port est déjà utilisé");
+                    Console.print("Le port est déjà utilisé",Level.WARNING);
                     return;
                 }
             }
@@ -361,6 +363,10 @@ public class ServerInstance {
 
 
             }
+
+            Console.print("Le serveur viens de démarrer le processus",Level.INFO);
+
+            Console.print("Chemins d'accès : "+Colors.ANSI_RESET()+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath(), Level.INFO);
 
 
 
@@ -392,7 +398,7 @@ public class ServerInstance {
 
             return;
         } catch (Exception e) {
-            System.out.println("Le serveur n'a pas pu démarré");
+           Console.print("Le serveur n'a pas pu démarré",Level.WARNING);
             e.printStackTrace();
             return;
         }
@@ -418,7 +424,7 @@ public class ServerInstance {
         if(processServers.containsKey(name)){
             processServers.remove(name);
         }
-        System.out.println("temp/"+pathName+"/"+finalName+"/"+name);
+       // System.out.println("temp/"+pathName+"/"+finalName+"/"+name);
         if(Config.contains("temp/"+pathName+"/"+finalName+"/"+name)){
 
             Config.removeDir("temp/"+pathName+"/"+finalName+"/"+name);
@@ -539,7 +545,7 @@ public class ServerInstance {
     }
 
     public static Integer getPort(String pathName,String finalname,Type type){
-        System.out.println(pathName);
+       // System.out.println(pathName);
         String fileName;
         String checker;
         boolean proxy = false;
@@ -562,7 +568,7 @@ public class ServerInstance {
             }else {
                 path = "server";
             }
-            System.out.println(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name));
+         //   System.out.println(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name));
             properties= new File(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name));
         }
 
@@ -571,7 +577,7 @@ public class ServerInstance {
         }
         try {
             // input the (modified) file content to the StringBuffer "input"
-            System.out.println(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+finalname+"/"+fileName));
+    //        System.out.println(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+finalname+"/"+fileName));
             BufferedReader file;
             if(type.equals(Type.DYNAMIC)){
                  file = new BufferedReader( new FileReader(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+finalname+"/"+fileName)));
@@ -589,9 +595,9 @@ public class ServerInstance {
                 if(line.contains(checker)){
 
                     String readline = line.replace(checker,"").replaceAll(" ","");
-                    System.out.println(readline);
+                  //  System.out.println(readline);
                     port = Integer.parseInt(readline);
-                    System.out.println(port);
+                  //  System.out.println(port);
 
                 }
                 inputBuffer.append(line);
@@ -645,7 +651,7 @@ public class ServerInstance {
       Config.createFile((System.getProperty("user.dir")+"/template/"+pathName+"/"+finalName+"/network.yml"));
         try {
                 PrintWriter writer = new PrintWriter(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+finalName+"/network.yml"),"utf-8");
-               System.out.println(type.name());
+             //  System.out.println(type.name());
                 if(type != null){
                     writer.println("type: "+type.name());
                 }

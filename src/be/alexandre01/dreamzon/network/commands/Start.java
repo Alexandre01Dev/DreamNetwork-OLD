@@ -12,6 +12,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
 
 public class Start  implements CommandsExecutor{
 
@@ -23,10 +24,10 @@ public class Start  implements CommandsExecutor{
                     if(Config.contains("template/"+args[1]+"/"+args[2])){
                         ServerInstance.startServer(args[2],args[1]);
                     }else {
-                        Console.print(Colors.ANSI_RED+"Veuillez d'abord configurer votre serveur avant de faire cela");
+                        Console.print(Colors.ANSI_RED()+"Veuillez d'abord configurer votre serveur avant de faire cela", Level.WARNING);
                     }
                 }else {
-                    Console.print(Colors.ANSI_RED+"start [SERVER OR PROXY] ServerName");
+                    Console.print(Colors.ANSI_RED()+"start [SERVER OR PROXY] ServerName",Level.WARNING);
                 }
             }
             return true;

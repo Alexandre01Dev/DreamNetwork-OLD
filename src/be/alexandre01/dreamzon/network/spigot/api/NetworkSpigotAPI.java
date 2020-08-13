@@ -2,6 +2,8 @@ package be.alexandre01.dreamzon.network.spigot.api;
 
 import be.alexandre01.dreamzon.network.enums.Type;
 import be.alexandre01.dreamzon.network.spigot.Server;
+import be.alexandre01.dreamzon.network.utils.Message;
+import be.alexandre01.dreamzon.network.utils.MessageChannel;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -10,37 +12,80 @@ public class NetworkSpigotAPI {
     public static ArrayList<String> servers = new ArrayList<>();
     private static ArrayList<String> templateServers = new ArrayList<>();
     public static void startServer(String name, Type type, String Xms, String Xmx){
-        Server.getServer().sendData("START;"+name+";"+type.name()+";"+Xms+";"+Xmx+";"+0);
+        MessageChannel channel = new MessageChannel();
+        Message message = new Message();
+        message.set("START",true);
+        message.set("NAME",name);
+        message.set("TYPE",type);
+        message.set("XMS",Xms);
+        message.set("XMX",Xmx);
+
+        channel.sendData(message);
     }
     public static void startServer(String name){
-        Server.getServer().sendData("START;"+name);
+        MessageChannel channel = new MessageChannel();
+        Message message = new Message();
+        channel.sendData(message.set("START",true));
     }
     public static void startServer(String name, Type type, String Xms, String Xmx,int port){
-        Server.getServer().sendData("START;"+name+";"+type.name()+";"+Xms+";"+Xmx+";"+port);
+        MessageChannel channel = new MessageChannel();
+        Message message = new Message();
+        message.set("START",true);
+        message.set("NAME",name);
+        message.set("TYPE",type);
+        message.set("XMS",Xms);
+        message.set("XMX",Xmx);
+        message.set("PORT",port);
+
+        channel.sendData(message);
     }
-    public static void sendDataToServer(String server, String data){
-        getServer().sendData("SENDDATA;"+server+";"+data);
+    public static void sendDataToServer(String server, Message data){
+        MessageChannel channel = new MessageChannel(server,Server.getServer().getName());
+        Message message = new Message();
+        message.set("data",data);
+
+        channel.sendData(message);
+
     }
-    public static void stopServer(String name){
-        Server.getServer().sendData("STOP;"+name);
+    public static void stopServer(String serverName){
+        MessageChannel channel = new MessageChannel(serverName);
+        Message message = new Message();
+        message.set("STOP",true);
+
+        channel.sendData(message);
     }
 
-    public static void sendCommands(String name, String commands){
-        Server.getServer().sendData("SENDCMD;"+name+";"+commands);
+    public static void sendCommands(String serverName, String commands){
+        MessageChannel channel = new MessageChannel(serverName);
+        Message message = new Message();
+        message.set("CMD",commands);
+
+        channel.sendData(message);
     }
 
     public static void restartServer(String name, Type type, String Xms, String Xmx){
-        Server.getServer().sendData("RESTART;"+name+";"+type.name()+";"+Xms+";"+Xmx);
+        MessageChannel channel = new MessageChannel(name);
+        Message message = new Message();
+        message.set("RESTART",true);
+        message.set("NAME",name);
+        message.set("TYPE",type);
+        message.set("XMS",Xms);
+        message.set("XMX",Xmx);
+
+        channel.sendData(message);
     }
 
     public static void setMaintenance(boolean isMaintenance){
-        Server.getServer().sendData("GETPROXY;MAINTENANCE;"+isMaintenance);
+        MessageChannel channel = new MessageChannel("BungeeCord");
+        channel.sendData(new Message().set("MAINTENANCE",isMaintenance));
     }
     public static void addPlayerFromMaintenance(String playerName){
-        Server.getServer().sendData("GETPROXY;ADDMAINTENANCE;"+playerName);
+        MessageChannel channel = new MessageChannel("BungeeCord");
+        channel.sendData(new Message().set("ADDMAINTENANCE",playerName));
     }
     public static void remPlayerFromMaintenance(String playerName){
-        Server.getServer().sendData("GETPROXY;REMMAINTENANCE;"+playerName);
+        MessageChannel channel = new MessageChannel("BungeeCord");
+        channel.sendData(new Message().set("REMMAINTENANCE",playerName));
     }
 
 
@@ -49,7 +94,11 @@ public class NetworkSpigotAPI {
     }
 
     public static void setSlot(int slot){
-        Server.getServer().sendData("GETPROXY;SLOT;"+slot);
+        MessageChannel channel = new MessageChannel("BungeeCord");
+        Message message = new Message();
+        message.set("SLOT",slot);
+
+        channel.sendData(message);
     }
     public static ArrayList<String> getServersList(){
         return servers;

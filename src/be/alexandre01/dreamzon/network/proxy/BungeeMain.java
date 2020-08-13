@@ -37,15 +37,19 @@ public class BungeeMain  extends Plugin implements Listener {
     public static BungeeMain instance;
     public int slot = -2;
     public boolean isMaintenance;
+    public boolean cancelKick;
+    public String kickServerRedirection = null;
     public List<String> allowedPlayer;
     public static File file;
     public String lobby;
+    public boolean logoStatus;
     public boolean connexionOnLobby;
     public static Configuration configuration;
     private ArrayList<Integer> acceptedversion;
     private ScheduledTask task;
     @Override
     public void onEnable() {
+        allowedPlayer = new ArrayList<>();
         acceptedversion = new ArrayList<>();
         acceptedversion.add(47);
         acceptedversion.add(107);
@@ -103,6 +107,21 @@ public class BungeeMain  extends Plugin implements Listener {
         }
         isMaintenance = configuration.getBoolean("network.maintenance");
 
+        if(!configuration.contains("network.kickRedirection")){
+            configuration.set("network.kickRedirection.enabled",true);
+            configuration.set("network.kickRedirection.server",lobby);
+            saveConfig();
+        }
+        cancelKick = configuration.getBoolean("network.kickRedirection.enabled");
+        if(cancelKick){
+            kickServerRedirection = configuration.getString("network.kickRedirection.enabled");
+        }
+        if(!configuration.contains("network.status")){
+            configuration.set("network.status.logo",true);
+            saveConfig();
+        }
+        logoStatus = configuration.getBoolean("network.status.logo");
+
         if(!configuration.contains("network.allowed-players-maintenance")){
             configuration.set("network.allowed-players-maintenance",new ArrayList<>());
             saveConfig();
@@ -152,13 +171,12 @@ public class BungeeMain  extends Plugin implements Listener {
 
     @EventHandler
     public void onServerKick(ServerKickEvent event) {
-        event.setCancelled(true);
-        event.setCancelServer(getLobby());
+        if(cancelKick){
+            event.setCancelled(true);
+            event.setCancelServer(getServer(kickServerRedirection));
+        }
     }
-    @EventHandler
-    public void onSwitch(ServerSwitchEvent event){
 
-    }
 
     @EventHandler
     public void onJoin(ServerConnectEvent event){
@@ -198,6 +216,33 @@ public class BungeeMain  extends Plugin implements Listener {
         for (String str : ProxyInstance.servers){
             System.out.println(str);
             if(str.toLowerCase().startsWith(lobby)){
+                i = Integer.parseInt(str.split("-")[1]);
+                word = str.split("-")[0];
+                ServerInfo serverInfo = getProxy().getServerInfo(str);
+                if(serverInfo.getPlayers().size() < 15){
+                    return serverInfo;
+                }
+
+            }
+        }
+        if(!isFound){
+            for (String str : ProxyInstance.servers){
+                ServerInfo serverInfo = getProxy().getServerInfo(str);
+                if(!(serverInfo.getPlayers().size() >= 50)){
+                    return  serverInfo;
+                }
+            }
+        }
+        return getProxy().getServerInfo(ProxyInstance.servers.get(0));
+    }
+    public ServerInfo getServer(String server){
+        int i = 0;
+        int max = 50;
+        String word = null;
+        boolean isFound = false;
+        for (String str : ProxyInstance.servers){
+            System.out.println(str);
+            if(str.toLowerCase().startsWith(server)){
                 i = Integer.parseInt(str.split("-")[1]);
                 word = str.split("-")[0];
                 ServerInfo serverInfo = getProxy().getServerInfo(str);
@@ -297,7 +342,7 @@ public class BungeeMain  extends Plugin implements Listener {
         final ServerPing.Players players = srvPing.getPlayers();
 
 
-        players.setSample(new ServerPing.PlayerInfo[]{new ServerPing.PlayerInfo("§7§m-----------------", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §e §c §a §2 §5 §b §6 §9 §6Octosia", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §eEvents§7:", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()), new ServerPing.PlayerInfo("§7» §eBoss§6Event", UUID.randomUUID()), new ServerPing.PlayerInfo("§7» §cChest§4Random", UUID.randomUUID()), new ServerPing.PlayerInfo("§7» §9Spawn§3Island", UUID.randomUUID()), new ServerPing.PlayerInfo("§7» §2Uhc§aFaction", UUID.randomUUID()),new ServerPing.PlayerInfo("§7» §3Ship§bBattle", UUID.randomUUID()) ,new ServerPing.PlayerInfo("§7» §8?", UUID.randomUUID()),new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §eSite§7:", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §b§owww.octosia.fr", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §b §4", UUID.randomUUID()),new ServerPing.PlayerInfo("§7§m-----------------", UUID.randomUUID())});
+        players.setSample(new ServerPing.PlayerInfo[]{new ServerPing.PlayerInfo("§7§m-----------------", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §e §c §a §2 §5 §b §6 §6Octosia", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §eEvents§7:", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()), new ServerPing.PlayerInfo("§7» §eKOTH", UUID.randomUUID()), new ServerPing.PlayerInfo("§7» §cIsland", UUID.randomUUID()), new ServerPing.PlayerInfo("§7» §9Raffinerie", UUID.randomUUID()),new ServerPing.PlayerInfo("§7» §8?", UUID.randomUUID()),new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §eSite§7:", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §b§owww.octosia.fr", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §b §4", UUID.randomUUID()),new ServerPing.PlayerInfo("§7§m-----------------", UUID.randomUUID())});
 
         if(slot != -2 && slot <= players.getOnline()){
             srvPing.setPlayers(new ServerPing.Players(slot,players.getOnline(),players.getSample()));
@@ -312,10 +357,11 @@ public class BungeeMain  extends Plugin implements Listener {
 
         srvPing.setVersion(version);
         TextComponent component = new TextComponent();
-        component.addExtra("     §7§7§l§m---§r §a§n§lOctosia§r §7§l--§r§7§l>§r §5§l[1.8 §7§l>>§5§l 1.15.2]§r §7§7§l§m---\n");
-        component.addExtra("    §r§c§l«§nPvP/Faction§r§c§l»§r §e§l«§nFarmToWin§r§e§l»§r §9§l«§9Retro§9§l»");
+        component.addExtra("    §e§l✯ §6§lOctosia §e§l✯ §6Serveur §c§lPvP Faction §f§n§lFarm2Win\n");
+        component.addExtra("            §e▅▆▇ §6§l150€ de §4§lCash Prize §e▇▆▅");
         srvPing.setDescriptionComponent(component);
         String address = e.getConnection().getAddress().toString().substring(1).split(":")[0].replace(".","-");
+        if(logoStatus){
 
         if(!ProxyInstance.servers.contains(lobby+"-0")){
             try {
@@ -339,6 +385,7 @@ public class BungeeMain  extends Plugin implements Listener {
                 }
             }
 
+        }
         }
         e.setResponse(srvPing);
     }

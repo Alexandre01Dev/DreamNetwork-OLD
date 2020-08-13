@@ -1,11 +1,12 @@
 package be.alexandre01.dreamzon.network.spigot.api;
 
+import be.alexandre01.dreamzon.network.utils.Message;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public class ReadDataEvent extends Event {
-    private String data;
-    public ReadDataEvent(String data) {
+    private Message data;
+    public ReadDataEvent(Message data) {
         this.data = data;
     }
     private static final HandlerList handlers = new HandlerList();
@@ -17,7 +18,7 @@ public class ReadDataEvent extends Event {
         return handlers;
     }
 
-    public String getData(){
+    public Message getData(){
         return data;
     }
 }

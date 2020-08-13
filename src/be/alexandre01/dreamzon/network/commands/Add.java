@@ -11,6 +11,7 @@ import net.md_5.bungee.api.config.ServerInfo;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.logging.Level;
 
 public class Add implements CommandsExecutor{
     @Override
@@ -26,7 +27,7 @@ public class Add implements CommandsExecutor{
                                  try {
                                      ServerInstance.updateConfigFile(args[1],args[2],Type.STATIC,args[4],args[5],Integer.parseInt(args[6]));
                                  }catch (Exception e){
-                                     Console.print(Colors.ANSI_RED+"Une erreur c'est produite, certainement car vous avez mal noté le port");
+                                     Console.print(Colors.ANSI_RED()+"Une erreur c'est produite, certainement car vous avez mal noté le port", Level.SEVERE);
                                  }
                              }else {
                                  ServerInstance.updateConfigFile(args[1],args[2],Type.STATIC,args[4],args[5],0);
@@ -39,15 +40,15 @@ public class Add implements CommandsExecutor{
                                      try {
                                          ServerInstance.updateConfigFile(args[1],args[2],Type.DYNAMIC,args[4],args[5],Integer.parseInt(args[6]));
                                      }catch (Exception e){
-                                         Console.print(Colors.ANSI_RED+"Une erreur c'est produite, certainement car vous avez mal noté le port");
+                                         Console.print(Colors.ANSI_RED()+"Une erreur c'est produite, certainement car vous avez mal noté le port", Level.SEVERE);
                                      }
 
                                  }else {
                                      ServerInstance.updateConfigFile(args[1],args[2],Type.DYNAMIC,args[4],args[5],0);
                                  }
                              }else {
-                                 Console.print(Colors.ANSI_RED+"[!] add server [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ");
-                                 Console.print(Colors.ANSI_RED+"[!] add proxy [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ");
+                                 Console.print(Colors.ANSI_RED()+"[!] add server [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ", Level.INFO);
+                                 Console.print(Colors.ANSI_RED()+"[!] add proxy [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ", Level.INFO);
                              }
                          }
 
@@ -95,11 +96,11 @@ public class Add implements CommandsExecutor{
 
 
                  }else {
-                     Console.print(Colors.ANSI_RED+"[!] add server [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ");
-                     Console.print(Colors.ANSI_RED+"[!] add proxy [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ");
+                     Console.print(Colors.ANSI_RED()+"[!] add server [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ", Level.INFO);
+                     Console.print(Colors.ANSI_RED()+"[!] add proxy [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ", Level.INFO);
                  }
             }else {
-                Console.print(Colors.ANSI_RED+"[!] add server [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ");
+                Console.print(Colors.ANSI_RED()+"[!] add server [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ", Level.INFO);
             }
             return true;
         }else {
@@ -123,7 +124,6 @@ public class Add implements CommandsExecutor{
             sb.append(stringArray[i]);
         }
         return Arrays.toString(stringArray);
-
     }
 
 

@@ -1,6 +1,7 @@
 package be.alexandre01.dreamzon.network.spigot.commands;
 
 import be.alexandre01.dreamzon.network.enums.Type;
+import be.alexandre01.dreamzon.network.spigot.SpigotMain;
 import be.alexandre01.dreamzon.network.spigot.api.NetworkSpigotAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -9,6 +10,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.util.List;
 
 public class NetworkCommand implements CommandExecutor {
@@ -114,13 +117,24 @@ public class NetworkCommand implements CommandExecutor {
                         if(args.length >= 5 ){
                             if(args.length == 6){
                                 NetworkSpigotAPI.startServer(args[1], Type.valueOf(args[2].toUpperCase()),args[3],args[4],Integer.parseInt(args[5]));
-                            sender.sendMessage("§e - §a Tu viens de lancer le serveur "+ args[1]);
-                        }else {
+                                sender.sendMessage("§e - §a Tu viens de lancer le serveur "+ args[1]);
+                            }else {
                                 NetworkSpigotAPI.startServer(args[1], Type.valueOf(args[2].toUpperCase()),args[3],args[4]);
                                 sender.sendMessage("§e - §a Tu viens de lancer le serveur "+ args[1]);
 
                             }
 
+                        }
+                    }
+                    if(args[0].equalsIgnoreCase("send")){
+                        if(args.length > 2){
+                            try {
+                                connectToServer(Bukkit.getPlayer(args[1]),args[2]);
+                            }catch (Exception e){
+                                sender.sendMessage("§c[§4Error§c] §e - §9Le joueur est introuvable");
+                            }
+                        }else {
+                            sender.sendMessage("§c[§4Error§c] §e - §9/network send [Player] [Server]  §e[§6New§e]");
                         }
                     }
                 }else {
@@ -134,6 +148,7 @@ public class NetworkCommand implements CommandExecutor {
                     sender.sendMessage("§e - §9/network cmd [SERVER] [COMMANDS]");
                     sender.sendMessage("§e - §9/network slot [SLOT]");
                     sender.sendMessage("§e - §9/network maintenance §e[§6New§e]");
+                    sender.sendMessage("§e - §9/network send [Player] [Server]  §e[§6New§e]");
                     sender.sendMessage("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*");
                 }
 
@@ -141,5 +156,20 @@ public class NetworkCommand implements CommandExecutor {
         return false;
     }
 
+    public void connectToServer(Player player, String server) {
+        try {
+            ByteArrayOutputStream b = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(b);
+            try {
+                out.writeUTF("Connect");
+                out.writeUTF(server);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            player.sendPluginMessage(SpigotMain.instance, "BungeeCord", b.toByteArray());
+        } catch (org.bukkit.plugin.messaging.ChannelNotRegisteredException e) {
+            Bukkit.getLogger().warning(" ERROR - Usage of bungeecord connect effects is not possible. Your server is not having bungeecord support (Bungeecord channel is not registered in your minecraft server)!");
+        }
+    }
 
 }

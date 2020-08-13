@@ -4,6 +4,8 @@ import be.alexandre01.dreamzon.network.Config;
 import be.alexandre01.dreamzon.network.utils.Colors;
 import be.alexandre01.dreamzon.network.utils.Console;
 
+import java.util.logging.Level;
+
 public class Remove implements CommandsExecutor{
     @Override
     public boolean onCommand(String[] args) {
@@ -13,19 +15,19 @@ public class Remove implements CommandsExecutor{
                     String name = args[2];
                     if(Config.contains("template/"+args[1].toLowerCase()+"/"+name)){
                         Config.removeDir("template/"+args[1].toLowerCase()+"/"+name);
-                        Console.print(Colors.ANSI_BLUE+"[V] Ce serveur a été supprimé");
-                        Console.print(Colors.ANSI_BLUE+"Le dossier a été supprimé dans le dossier 'template' ");
+                        Console.print(Colors.ANSI_BLUE+"[V] Ce serveur a été supprimé", Level.INFO);
+                        Console.print(Colors.ANSI_BLUE+"Le dossier a été supprimé dans le dossier 'template' ", Level.INFO);
                     }else {
-                        Console.print(Colors.ANSI_RED+"[!] Ce serveur n'existe pas");
+                        Console.print(Colors.ANSI_RED()+"[!] Ce serveur n'existe pas", Level.WARNING);
                     }
 
 
                 }else {
-                    Console.print(Colors.ANSI_RED+"[!] remove server [name] => remove a server ");
-                    Console.print(Colors.ANSI_RED+"[!] remove proxy [name] => remove a server ");
+                    Console.print(Colors.ANSI_RED()+"[!] remove server [name] => remove a server ", Level.INFO);
+                    Console.print(Colors.ANSI_RED()+"[!] remove proxy [name] => remove a server ", Level.INFO);
                 }
             }else {
-                Console.print(Colors.ANSI_RED+"[!] remove server [name] => remove a server ");
+                Console.print(Colors.ANSI_RED()+"[!] remove server [name] => remove a server", Level.INFO);
             }
             return true;
         }

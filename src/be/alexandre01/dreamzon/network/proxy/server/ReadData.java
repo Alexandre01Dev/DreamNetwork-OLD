@@ -1,13 +1,12 @@
 package be.alexandre01.dreamzon.network.proxy.server;
 
-import be.alexandre01.dreamzon.network.proxy.BungeeMain;
 import be.alexandre01.dreamzon.network.spigot.WaitForConnection;
-import be.alexandre01.dreamzon.network.utils.Crypter;
+import be.alexandre01.dreamzon.network.utils.BasicCrypter;
+import be.alexandre01.dreamzon.network.utils.Message;
 import be.alexandre01.dreamzon.network.utils.Utils;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import org.bukkit.Bukkit;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,8 +30,8 @@ public class ReadData extends Thread{
                     String data = null;
 
                     while (!remote.getClient().isClosed() && (data = reader.readLine()) != null){
-                        if(Crypter.canDecode(data)){
-                            remote.readData(Crypter.decode(data));
+                        if(BasicCrypter.canDecode(data)){
+                            remote.readData(Message.createFromJsonString(BasicCrypter.decode(data)));
                         }
 
                     }

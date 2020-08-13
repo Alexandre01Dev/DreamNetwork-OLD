@@ -1,5 +1,7 @@
 package be.alexandre01.dreamzon.network.remote.client;
 
+import be.alexandre01.dreamzon.network.utils.Colors;
+import be.alexandre01.dreamzon.network.utils.Console;
 import be.alexandre01.dreamzon.network.utils.Utils;
 
 import java.net.Socket;
@@ -32,7 +34,7 @@ public class ThreadConnection {
                     Socket socket = new Socket(adresse,port);
                     Client client = new Client(socket,username,password,processName,port-1);
                     Utils.setClient(client);
-                    System.out.println("Connécté aux serveur !" + processName);
+                    Console.print(Colors.ANSI_GREEN()+"Connécté au serveur " +Colors.ANSI_PURPLE+ processName);
 
                     cancel();
                     return;

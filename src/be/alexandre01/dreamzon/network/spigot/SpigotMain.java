@@ -5,7 +5,9 @@ import be.alexandre01.dreamzon.network.spigot.api.ReloadEvent;
 import be.alexandre01.dreamzon.network.spigot.commands.NetworkCommand;
 import be.alexandre01.dreamzon.network.spigot.commands.gui.InventoryEvent;
 import be.alexandre01.dreamzon.network.spigot.commands.gui.InventoryManager;
+import be.alexandre01.dreamzon.network.utils.Message;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.libs.jline.console.ConsoleReader;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,6 +15,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.io.IOException;
 
 
 public class SpigotMain extends JavaPlugin implements Listener {
@@ -24,12 +28,15 @@ public class SpigotMain extends JavaPlugin implements Listener {
     @Override
     public void onEnable(){
         instance = this;
+        this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         inventoryManager = new InventoryManager();
         System.out.println(Bukkit.getPort());
         Server.startServer();
         getServer().getPluginManager().registerEvents(this,this);
         getServer().getPluginManager().registerEvents(new InventoryEvent(inventoryManager),this);
         getCommand("network").setExecutor(new NetworkCommand());
+
+
     }
 
     @Override
@@ -62,7 +69,7 @@ public class SpigotMain extends JavaPlugin implements Listener {
                             Bukkit.reload();
                         }
                     }.runTaskLater(this,20L);
-                    NetworkSpigotAPI.getServer().sendData("RELOAD");
+                    NetworkSpigotAPI.getServer().sendData(new Message().set("RELOAD",true));
                     isReloading = true;
                 }else {
                     this.consoleReloading =  false;
@@ -95,7 +102,7 @@ public class SpigotMain extends JavaPlugin implements Listener {
                             players.sendMessage("§7« §fUn §eRELOAD §f est en cours §7»");
                         }
                     }
-                    NetworkSpigotAPI.getServer().sendData("RELOAD");
+                    NetworkSpigotAPI.getServer().sendData(new Message().set("RELOAD",true));
                     isReloading = true;
                 }else {
                     this.playerReloading = false;

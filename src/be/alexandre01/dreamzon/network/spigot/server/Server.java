@@ -1,11 +1,13 @@
 package be.alexandre01.dreamzon.network.spigot.server;
 
 import be.alexandre01.dreamzon.network.enums.User;
+import be.alexandre01.dreamzon.network.proxy.server.Proxy;
 import be.alexandre01.dreamzon.network.spigot.api.NetworkConnectEvent;
 import be.alexandre01.dreamzon.network.spigot.api.NetworkSpigotAPI;
 import be.alexandre01.dreamzon.network.spigot.api.ReadDataEvent;
 import be.alexandre01.dreamzon.network.spigot.api.ReadServerDataEvent;
-import be.alexandre01.dreamzon.network.utils.Crypter;
+import be.alexandre01.dreamzon.network.utils.BasicCrypter;
+import be.alexandre01.dreamzon.network.utils.Message;
 import be.alexandre01.dreamzon.network.utils.Utils;
 import org.bukkit.Bukkit;
 
@@ -34,7 +36,7 @@ public class Server {
         Thread readData = new Thread(new ReadData(this));
 
         readData.start();
-        sendData("ALREADY!");
+        sendData(new Message().set("ALREADY",true));
     }
     public String getMotd(){
         try {
@@ -46,13 +48,13 @@ public class Server {
         }
 
     }
-    public void readData(String data){
+    public void readData(Message data){
         if(isAuth){
             System.out.println("["+getName()+"] "+data);
             Bukkit.getPluginManager().callEvent(new ReadDataEvent(data));
-            if(data.contains(":")){
-                String[] strings = data.split(":");
-                Bukkit.getPluginManager().callEvent(new ReadServerDataEvent(strings[0],strings[1]));
+            if(data.contains("ServerName")){
+                String serverName = data.getString("ServerName");
+                Bukkit.getPluginManager().callEvent(new ReadServerDataEvent(serverName,data));
             }
 
             //for(ServerCommands remoteCommands : ServerCommands.values()){
@@ -68,8 +70,8 @@ public class Server {
                     sendData("PERM!");
                     sendData("CMD!");*/
 
-                    if (data.startsWith("CMD")){
-                        String[] splitter =data.replace("CMD","").split(";");
+                    if (data.contains("CMD")){
+                        String[] splitter =data.getString("CMD").split(" ");
                         if(splitter[0].equalsIgnoreCase("stop")){
                             Bukkit.shutdown();
                             return;
@@ -90,98 +92,89 @@ public class Server {
                     }
             if(data.contains("GET")){
                 System.out.println("GET3!!!");
-                sendData("MOTD;");
+               // sendData();
             }
 
-            if (data.startsWith("NAME")){
-                   String[] splitter =data.replace("NAME","").split(";");
-                    name = splitter[1];
+            if (data.contains("NAME")){
+                    name = data.getString("Name");
                   System.out.println("Nom du processus : "+name );
                 Bukkit.getPluginManager().callEvent(new NetworkConnectEvent());
               }
 
-            if(data.startsWith("ADDSERVERLIST;")){
-                NetworkSpigotAPI.addServerToList(data.split(";")[1]);
+            if(data.contains("ADDSERVERLIST")){
+                NetworkSpigotAPI.addServerToList(data.getString("ServerName"));
+               /* if(!NetworkSpigotAPI.getTemplateServers().contains(data.split(";")[1].split("-")[0])){
+                    NetworkSpigotAPI.addTemplateServerToList(data.split(";")[1].split("-")[0]);
+                }*/
 
             }
-            if(data.startsWith("REMSERVERLIST;")){
-                NetworkSpigotAPI.remServerToList(data.split(";")[1]);
+            if(data.contains("ADDTEMPLATELIST")){
+                NetworkSpigotAPI.addTemplateServerToList(data.getString("ServerName"));
+
             }
-            if(data.startsWith("SUCCESS")){
+            if(data.contains("REMSERVERLIST")){
+                NetworkSpigotAPI.remServerToList(data.getString("ServerName"));
+            }
+            if(data.contains("SUCCESS")){
                 System.out.println("CALLEVENT");
-
             }
         }else {
-            auth(Crypter.decode(data));
-
-
+            auth(data);
         }
 
     }
 
-    public void sendData(String data){
-        if(name != null){
-            data = name+"*"+data;
+    public void sendData(Message data){
+        String sData = BasicCrypter.encode(data.toString());
+
+        try{
+            OutputStream out = client.getOutputStream();
+
+            PrintWriter writer = new PrintWriter(out);
+            writer.write(sData+"\n");
+            writer.flush();
+        }catch (Exception e){
+            System.out.println("FAIL #7");
         }
-        data = Crypter.encode(data);
 
 
-            try{
-                OutputStream out = client.getOutputStream();
+    }
 
-                PrintWriter writer = new PrintWriter(out);
-                writer.write(data + "\n");
-                writer.flush();
-
-            }catch (Exception e){
-                System.out.println("FAIL #7");
-            }
-
-
-        }
 
 
     public void setUser(User user) {
         this.user = user;
     }
 
-    public void auth(String data){
+    public void auth(Message data){
         try {
             for(Server remotes : Utils.remoteClients){
                 if(remotes.getClient().getInetAddress().equals(client.getInetAddress())){
                     System.out.println("["+client.getInetAddress().getHostAddress()+"] Already Connected");
-                    sendData("ALREADY");
+                    sendData(new Message().set("ALREADY",true));
                     return;
                 }
             }
-        String decodedKey = data;
-            System.out.println("["+getName()+"]"+data);
-        if(decodedKey.startsWith("#auth")){
-            String[] splitter =decodedKey.replace("#auth","").split(";");
-            String username = splitter[0];
-            String password = splitter[1];
-
-            for(User user : User.values()){
-                if(user.getUsername().equals(username) && user.getPassword().equals(password)){
-                    System.out.println("["+client.getInetAddress().getHostAddress()+"] Successfully Auth");
-                    setUser(user);
-                    Utils.remoteClients.add(this);
-                    setAuth(true);
-                   sendData("OK!");
-
-                   sendData("NAME;");
-
-
-                    return;
+            System.out.println("YES");
+            if(data.contains("AUTH")){
+                for(User user : User.values()){
+                    if(user.getUsername().equals(data.getString("USERNAME")) && user.getPassword().equals(data.getString("PASSWORD"))){
+                        System.out.println("["+client.getInetAddress().getHostAddress()+"] Successfully Auth");
+                        setUser(user);
+                        Utils.remoteClients.add(this);
+                        setAuth(true);
+                        sendData(new Message().set("PROXY",true));
+                        sendData(new Message().set("OK!",true));
+                        return;
+                    }
                 }
-            }
 
-            Utils.remoteClients.remove(this);
-            setAuth(false);
-            sendData("FAIL");
-            System.out.println("["+client.getInetAddress().getHostAddress()+"] Fail Auth " + username + " "+ password);
-            client.close();
-        }
+                // Utils.remoteClients.remove(this);
+                setAuth(false);
+                sendData(new Message().set("FAIL",true));
+                System.out.println("["+client.getInetAddress().getHostAddress()+"] Fail Auth " + data.getString("USERNAME") + " "+ data.getString("PASSWORD"));
+                client.close();
+            }
         }catch (Exception e){
 
         }

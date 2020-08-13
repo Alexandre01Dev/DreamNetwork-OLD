@@ -1,7 +1,11 @@
 package be.alexandre01.dreamzon.network;
 
+import be.alexandre01.dreamzon.network.utils.Colors;
+import be.alexandre01.dreamzon.network.utils.Console;
+
 import java.io.*;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class Config {
     public static String getPath(String path){
@@ -24,7 +28,7 @@ public class Config {
         File theDir = new File(getPath(path));
 
         if (!theDir.exists()) {
-            System.out.println("creating directory... " + theDir.getName());
+           Console.print(Colors.ANSI_CYAN+"Création du dossier... " + theDir.getName(), Level.INFO);
             boolean result = false;
 
             try{
@@ -35,7 +39,7 @@ public class Config {
                 //handle it
             }
             if(result) {
-                System.out.println("DIR created");
+               Console.print(Colors.ANSI_CYAN+"Dossier crée",Level.INFO);
             }
         }
     }
@@ -43,7 +47,7 @@ public class Config {
         File theDir = new File(getPath(path));
 
         if (!theDir.exists()) {
-            System.out.println("creating file... " + theDir.getName());
+            Console.print(Colors.ANSI_CYAN+"Création du fichier... " + theDir.getName(), Level.INFO);
             boolean result = false;
 
             try{
@@ -58,7 +62,7 @@ public class Config {
                 //handle it
             }
             if(result) {
-                System.out.println("FILE created");
+                Console.print(Colors.ANSI_CYAN+"Fichier crée !", Level.INFO);
             }
         }
     }
@@ -141,5 +145,13 @@ public class Config {
         }
 
 
+    }
+
+    public static boolean isWindows(){
+        if(System.getProperty("os.name").startsWith("Windows")){
+          return true;
+        }else {
+            return false;
+        }
     }
 }

@@ -2,9 +2,8 @@ package be.alexandre01.dreamzon.network.spigot.server;
 
 import be.alexandre01.dreamzon.network.spigot.SpigotMain;
 import be.alexandre01.dreamzon.network.spigot.WaitForConnection;
-import be.alexandre01.dreamzon.network.utils.Crypter;
+import be.alexandre01.dreamzon.network.utils.BasicCrypter;
 import be.alexandre01.dreamzon.network.utils.Utils;
-import org.apache.commons.codec.digest.Crypt;
 import org.bukkit.Bukkit;
 
 import java.io.BufferedReader;
@@ -29,8 +28,8 @@ public class ReadData extends Thread{
                     String data = null;
 
                     while (!remote.getClient().isClosed() && (data = reader.readLine()) != null){
-                        if(Crypter.canDecode(data)){
-                            remote.readData(Crypter.decode(data));
+                        if(BasicCrypter.canDecode(data)){
+                          //  remote.readData(BasicCrypter.decode(data));
                         }
                     }
                     in.reset();

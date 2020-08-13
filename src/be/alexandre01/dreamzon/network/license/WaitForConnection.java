@@ -13,7 +13,7 @@ public class WaitForConnection extends Thread{
                     Socket client = Proxy.getServer().accept();
 
                     System.out.println("[" + client.getInetAddress().getHostName()+"] Client Connected => Try Auth");
-                    LicenseSocket  remoteClass = new LicenseSocket(client);
+                //    LicenseSocket  remoteClass = new LicenseSocket(client);
 
 
 

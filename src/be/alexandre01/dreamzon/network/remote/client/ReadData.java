@@ -1,13 +1,16 @@
 package be.alexandre01.dreamzon.network.remote.client;
 
 import be.alexandre01.dreamzon.network.Main;
-import be.alexandre01.dreamzon.network.utils.Crypter;
+import be.alexandre01.dreamzon.network.utils.BasicCrypter;
+import be.alexandre01.dreamzon.network.utils.Console;
+import be.alexandre01.dreamzon.network.utils.Message;
 import be.alexandre01.dreamzon.network.utils.ServerInstance;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.logging.Level;
 
 public class ReadData extends Thread{
     Client remote;
@@ -23,7 +26,7 @@ public class ReadData extends Thread{
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                 String data = null;
                 while((data = reader.readLine()) != null){
-                    String decoded = Crypter.decode(data);
+                    String decoded = BasicCrypter.decode(data);
                     if(remote.getClient().isBound()){
                         if(decoded.contains("*")){
                             String[] splitter = decoded.split("\\*");
@@ -33,19 +36,18 @@ public class ReadData extends Thread{
                                 sb.append(splitter[i]+" ");
                             }
 
-                            remote.readData(sb.toString(),splitter[0]);
+                            remote.readData(Message.createFromJsonString(sb.toString()),splitter[0]);
                         }else {
-                            remote.readData(decoded,null);
+                            remote.readData(  Message.createFromJsonString(decoded),null);
                         }
                     }
 
 
 
                 }
-                System.out.println("CLOSED !");
                 remote.getClient().close();
             }catch (Exception e){
-                System.out.println("Remote failed: Error #2");
+                Console.print("Remote failed: Error #2", Level.SEVERE);
                 try{
                     String name = remote.getProcessName();
                     remote.getClient().close();
@@ -56,27 +58,26 @@ public class ReadData extends Thread{
 
                     }else {
                         pathName = "server";
-                        Main.getInstance().getProxy().sendData("STOP;"+remote.getProcessName());
+                        Main.getInstance().getProxy().sendData(new Message().set("STOP",remote.getProcessName()));
                         for(Client clients : Main.getInstance().getClients()){
-                            String sendList = "REMSERVERLIST;"+remote.getProcessName();
-                            clients.sendData(sendList);
+                            clients.sendData(new Message().set("REMSERVERLIST",remote.getProcessName()));
                         }
                     }
 
                     if(!remote.isReload){
                         ServerInstance.stopServer(name,pathName);
                     }else{
-                        System.out.println(name);
+                        //System.out.println(name);
                         new Connect("localhost",remote.getPort(),"Console","8HetY4474XisrZ2FGwV5z",name);
                     }
 
                     this.stop();
                 }catch (Exception f){
-                    System.out.println("Remote failed: Error #3");
+                    Console.print("Remote failed: Error #3", Level.SEVERE);
                 }
             }
         }
-        System.out.println("C'est down !");
+        //System.out.println("C'est down !");
         String name = remote.getProcessName();
         String pathName;
         boolean isReload = remote.isReload;
@@ -88,10 +89,10 @@ public class ReadData extends Thread{
         pathName = "server";
         pathName = "server";
         int port = remote.getPort();
-        Main.getInstance().getProxy().sendData("STOP;"+remote.getProcessName());
+
+        Main.getInstance().getProxy().sendData(new Message().set("STOP",remote.getProcessName()));
         for(Client clients : Main.getInstance().getClients()){
-            String sendList = "REMSERVERLIST;"+remote.getProcessName();
-            clients.sendData(sendList);
+            clients.sendData(new Message().set("REMSERVERLIST",remote.getProcessName()));
         }
         Main.getInstance().getClients().remove(remote);
             try {
@@ -104,8 +105,8 @@ public class ReadData extends Thread{
             if(!isReload){
                 ServerInstance.stopServer(name,pathName);
             }else{
-                System.out.println(name);
-                System.out.println(port);
+                //System.out.println(name);
+               // System.out.println(port);
                 new Connect("localhost",port,"Console","8HetY4474XisrZ2FGwV5z",name);
             }
     }

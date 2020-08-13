@@ -2,17 +2,19 @@ package be.alexandre01.dreamzon.network.remote.client;
 
 import be.alexandre01.dreamzon.network.Main;
 import be.alexandre01.dreamzon.network.enums.Type;
-import be.alexandre01.dreamzon.network.proxy.server.ProxyInstance;
-import be.alexandre01.dreamzon.network.spigot.Server;
-import be.alexandre01.dreamzon.network.utils.Crypter;
-import be.alexandre01.dreamzon.network.utils.ServerInstance;
-import be.alexandre01.dreamzon.network.utils.Utils;
+import be.alexandre01.dreamzon.network.utils.*;
+import com.google.gson.Gson;
+import com.sun.org.apache.bcel.internal.generic.DADD;
+import org.bukkit.entity.Player;
 
-import javax.rmi.CORBA.Util;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.logging.Level;
 
 public class Client{
     private Socket client;
@@ -52,21 +54,26 @@ public class Client{
     }
 
     public void auth(){
-        sendData(Crypter.encode("#auth"+username+";"+pasword));
+        Message message = new Message();
+        message.set("AUTH",true);
+        message.set("USERNAME",username);
+        message.set("PASSWORD",pasword);
+        sendData(message);
     }
 
     public void setAuth(boolean auth) {
         isAuth = auth;
     }
 
-    public void readData(String data, String name){
-
-        if (data.equalsIgnoreCase("ALREADY!")) {
-            System.out.println("Console connecté ");
+    public void readData(Message data,String server){
+        System.out.println("YES");
+        System.out.println(data);
+        if (data.contains("ALREADY")) {
+            Console.print("Console connecté ", Level.INFO);
             auth();
         }
-        if(data.equalsIgnoreCase("FAIL!")){
-            System.out.println("Console fail connection");
+        if(data.contains("FAIL")){
+            Console.print("Console fail connection",Level.WARNING);
             try {
                 this.client.close();
                 String pathName;
@@ -81,47 +88,54 @@ public class Client{
             }
 
         }
-        if(data.equalsIgnoreCase("PROXY")){
-            System.out.println("PROXY !");
+        if(data.contains("PROXY")){
             proxy = true;
         }
-        if(data.equalsIgnoreCase("OK!")){
-            System.out.println("Vous avez bien été connecté aux serveurs");
+        if(data.contains("OK!")){
+            Console.print(Colors.GREEN+"Vous avez bien été connecté aux serveurs",Level.INFO);
 
             setAuth(true);
 
-            sendData("NAME;"+processName);
+            sendData(new Message().set("NAME",processName));
             if(proxy){
                 Main.getInstance().setProxy(this);
             }else {
-                System.out.println("GET! ici");
-                sendData("GET");
+               // System.out.println("GET! ici");
+                sendData(new Message().set("GET",true));
             }
-            String sendServer = "ADDSERVERLIST;"+  getProcessName();
+            Message sendServer = new Message().set("ADDSERVERLIST",getProcessName());
             sendData(sendServer);
-
+            ArrayList<String> template = new ArrayList<>();
             for(Client s : Main.getInstance().getClients()){
 
                 String sendLists = "ADDSERVERLIST;"+  s.getProcessName();
-                sendData(sendLists);
+                template.add(s.getProcessName().split("-")[0]);
 
-                s.sendData("ADDSERVERLIST;"+  getProcessName());
+                s.sendData(new Message().set("ADDSERVERLIST", s.getProcessName()));
 
             }
 
+            sendData(new Message().set("ADDTEMPLATELIST",template));
+
             Main.getInstance().addClient(this);
+            if(!proxy){
+                Message message = new Message();
+                message.set("START",true);
+                message.set("ServerName",processName);
+                message.set("IP",client.getInetAddress().getHostAddress());
+                message.set("PORT",client.getPort());
+                message.set("MOTD",motd);
+                Main.getInstance().getProxy().sendData(message);
+            }
 
 
         }
-        if(data.startsWith("START;")){
-            String[] args =data.replaceAll(" ","").split(";");
-            if(args.length > 2){
 
-            }
-        String serverName = args[1];
-        String type = args[2];
-        String Xms = args[3];
-        String Xmx = args[4];
+        if(data.contains("START")){
+        String serverName = data.getString("SERVERNAME");
+        String type = data.getString("TYPE");
+        String Xms = data.getString("XMS");
+        String Xmx = data.getString("XMX");
         String pathName;
         if(proxy){
             pathName = "proxy";
@@ -130,8 +144,8 @@ public class Client{
         }
         ServerInstance.startServer(serverName,pathName, Type.valueOf(type),Xms,Xmx,0);
         }
-        if(data.startsWith("STOP;")){
-            String serverName = data.split(";")[1];
+        if(data.contains("STOP")){
+            String serverName = data.getString("STOP").split(";")[0];
             String pathName;
             if(proxy){
                 pathName = "proxy";
@@ -140,8 +154,8 @@ public class Client{
             }
             ServerInstance.stopServer(serverName,pathName);
         }
-        if(data.startsWith("RESTART;")){
-            String[] args =data.replaceAll(" ","").split(";");
+        if(data.contains("RESTART")){
+            String[] args =data.getString("RESTART").replaceAll(" ","").split(";");
             String serverName = args[1];
             String type = args[2];
             String Xms = args[3];
@@ -157,34 +171,31 @@ public class Client{
             ServerInstance.startServer(serverName,pathName, Type.valueOf(type),Xms,Xmx, Integer.parseInt(port));
             //ServerInstance.startServer(serverName,pathName,Type.STATIC);
         }
-        if(data.startsWith("SENDDATA;")){
-            System.out.println("SENDDATA ! => "+ data);
-            String serverName = data.split(";")[1];
-            String strings = data.replace("SENDDATA;"+serverName+";","");
-
-            Client client = Main.getInstance().getClient(serverName);
-            System.out.println(getProcessName()+":"+strings);
-            client.sendData(getProcessName()+":"+strings);
+        if(data.contains("SENDDATA")){
+          //  System.out.println("SENDDATA ! => "+ data);
+            Message message = new Message();
+            message.set("PROVIDER",getProcessName());
+            message.set("DATA",data.get("DATA"));
+            String serverName = data.getString("SENDDATA").split(";")[0];
+            Client client = Main.getInstance().getClient(data.getString("SERVER"));
+           // System.out.println(getProcessName()+":"+strings);
+            client.sendData(message);
         }
 
-        if(data.startsWith("SENDCMD;")){
-            String serverName = data.split(";")[1];
-            String[] strings = data.replace("SENDCMD;","").split(";");
+        if(data.contains("SENDCMD")){
+
+            String serverName =  data.getString("SERVERNAME");
+            String cmd =   data.getString("COMMAND");
             String pathName;
             if(proxy){
                 pathName = "proxy";
             }else {
                 pathName = "server";
             }
-            StringBuffer sb = new StringBuffer();
-
-            for (int i = 1; i < strings.length; i++) {
-                sb.append(strings[i]+" ");
-            }
             Client client = Main.getInstance().getClient(serverName);
-            client.sendData("CMD;"+sb.toString());
+            client.sendData(data);
         }
-        if(data.startsWith("RELOAD")){
+        if(data.contains("RELOAD")){
             this.isReload = true;
             try {
                 getClient().close();
@@ -193,47 +204,56 @@ public class Client{
             }
 
         }
-        if(data.startsWith("GETPROXY;")){
-            String subdata = data.replaceAll("GETPROXY;","");
-
-            if(subdata.startsWith("SLOT;")){
-                Main.getInstance().getProxy().sendData("SLOT;"+ data.replaceAll("GETPROXY;SLOT;",""));
+        if(data.contains("TEST")){
+        }
+        if(data.contains("GETPROXY")){
+            if(data.contains("SLOT")){
+                Message message = new Message();
+                message.set("SLOT",data.getInt("SLOT"));
+                Main.getInstance().getProxy().sendData(message);
             }
-            if(subdata.startsWith("MAINTENANCE;")){
-                Main.getInstance().getProxy().sendData(data.replace("GETPROXY;",""));
-                Boolean.parseBoolean(subdata.replace("MAINTENANCE;",""));
+            if(data.contains("MAINTENANCE")){
+                Message message = new Message();
+                message.set("MAINTENANCE",data.get("MAINTENANCE"));
+                Main.getInstance().getProxy().sendData(message);
             }
-            if(subdata.startsWith("ADDMAINTENANCE")){
-                Main.getInstance().getProxy().sendData(data.replace("GETPROXY;",""));
+            if(data.contains("ADDMAINTENANCE")){
+                Main.getInstance().getProxy().sendData(new Message().set("ADDMAINTENANCE",data.get("ADDMAINTENANCE")));
             }
-            if(subdata.startsWith("REMMAINTENANCE")){
-                Main.getInstance().getProxy().sendData(data.replace("GETPROXY;",""));
+            if(data.contains("REMMAINTENANCE")){
+                Main.getInstance().getProxy().sendData(new Message().set("REMMAINTENANCE",data.get("REMMAINTENANCE")));
             }
         }
-        System.out.println("["+getProcessName()+"] "+data);
-        if(data.startsWith("MOTD")){
-            motd = data.split(";")[1];
-            System.out.println("SEND !");
-            Main.getInstance().getProxy().sendData("START;"+processName+";"+client.getInetAddress().getHostAddress()+";"+(client.getPort()-1)+";"+ motd);
+        //Console.print("["+getProcessName()+"] "+data,Level.INFO);
+        if(data.contains("MOTD")){
+            motd = data.getString("MOTD").split(";")[0];
+           //System.out.println("SEND !");
+            Message message = new Message();
+            message.set("SERVERNAME",processName);
+            message.set("IP",client.getInetAddress().getHostAddress());
+            message.set("PORT",client.getPort());
+            message.set("MOTD",motd);
+            Main.getInstance().getProxy().sendData(message);
         }
 
     }
-    public void sendData(String data){
-            data = Crypter.encode(data);
+    public void sendData(Message data){
+            String encode = BasicCrypter.encode(data.toString());
         if(!client.isClosed()){
 
             try{
                 OutputStream out = client.getOutputStream();
 
                 PrintWriter writer = new PrintWriter(out);
-                writer.write(data + "\n");
+                assert encode != null;
+                writer.write(encode+"\n");
                 writer.flush();
             }catch (Exception e){
                 System.out.println("FAIL #7");
             }
 
         }else {
-            System.out.println("Client Connection - Closed");
+            Console.print("Client Connection - Closed",Level.WARNING);
         }
     }
     public Socket getClient() {
@@ -244,7 +264,7 @@ public class Client{
         return username;
     }
 
-    public String getPasword() {
+    public String getPassword() {
         return pasword;
     }
 
