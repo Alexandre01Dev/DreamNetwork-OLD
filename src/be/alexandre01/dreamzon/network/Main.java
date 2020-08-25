@@ -2,10 +2,7 @@ package be.alexandre01.dreamzon.network;
 
 import be.alexandre01.dreamzon.network.commands.*;
 import be.alexandre01.dreamzon.network.commands.Start;
-import be.alexandre01.dreamzon.network.proxy.server.Proxy;
-import be.alexandre01.dreamzon.network.remote.client.Client;
-import be.alexandre01.dreamzon.network.utils.ConciseFormatter;
-import be.alexandre01.dreamzon.network.utils.LoggingOutputStream;
+import be.alexandre01.dreamzon.network.connection.client.Client;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -73,6 +70,7 @@ public class Main {
             System.out.println("Tap [Enter]");
             String question = reader.readLine();
             System.out.println("Le Network a été démarré avec succès / Faites help pour avoir les commandes");
+            write("> ");
             BufferedReader cReader =
                     new BufferedReader(new InputStreamReader(System.in));
 
@@ -88,14 +86,11 @@ public class Main {
             isRunning= true;
             while (isRunning){
                 commands.check(args);
-                args = reader.readLine().split(" ");
                 write("> ");
+                args = reader.readLine().split(" ");
 
-
-            Config.createDir("template");
+                Config.createDir("template");
             }
-            //copy source to target using Files Class
-            Config.copy(new File(Config.getPath("template")),new File(Config.getPath("template1")));
 
         }catch (Exception e){
             e.printStackTrace();

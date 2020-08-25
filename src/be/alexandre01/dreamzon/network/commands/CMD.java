@@ -1,10 +1,10 @@
 package be.alexandre01.dreamzon.network.commands;
 
 import be.alexandre01.dreamzon.network.Main;
-import be.alexandre01.dreamzon.network.remote.client.Client;
-import be.alexandre01.dreamzon.network.utils.Colors;
-import be.alexandre01.dreamzon.network.utils.Console;
-import be.alexandre01.dreamzon.network.utils.Message;
+import be.alexandre01.dreamzon.network.connection.client.Client;
+import be.alexandre01.dreamzon.network.utils.console.Colors;
+import be.alexandre01.dreamzon.network.utils.console.Console;
+import be.alexandre01.dreamzon.network.utils.message.Message;
 
 import java.util.logging.Level;
 

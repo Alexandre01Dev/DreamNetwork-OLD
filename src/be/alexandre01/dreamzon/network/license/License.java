@@ -1,9 +1,7 @@
 package be.alexandre01.dreamzon.network.license;
 
-import be.alexandre01.dreamzon.network.remote.client.Connect;
-import com.sun.org.apache.bcel.internal.generic.NEW;
+import be.alexandre01.dreamzon.network.license.connection.LicenseConnect;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;

@@ -1,17 +1,10 @@
 package be.alexandre01.dreamzon.network.commands;
 
 import be.alexandre01.dreamzon.network.Config;
-import be.alexandre01.dreamzon.network.Main;
-import be.alexandre01.dreamzon.network.utils.Colors;
-import be.alexandre01.dreamzon.network.utils.Console;
+import be.alexandre01.dreamzon.network.utils.console.Colors;
+import be.alexandre01.dreamzon.network.utils.console.Console;
 import be.alexandre01.dreamzon.network.utils.ServerInstance;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Level;
 
 public class Start  implements CommandsExecutor{

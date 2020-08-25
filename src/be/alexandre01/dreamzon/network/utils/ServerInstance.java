@@ -2,8 +2,10 @@ package be.alexandre01.dreamzon.network.utils;
 
 import be.alexandre01.dreamzon.network.Config;
 import be.alexandre01.dreamzon.network.Main;
-import be.alexandre01.dreamzon.network.enums.Type;
-import be.alexandre01.dreamzon.network.remote.client.Connect;
+import be.alexandre01.dreamzon.network.enums.Mods;
+import be.alexandre01.dreamzon.network.connection.client.Connect;
+import be.alexandre01.dreamzon.network.utils.console.Colors;
+import be.alexandre01.dreamzon.network.utils.console.Console;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,10 +20,10 @@ public class ServerInstance {
 
     private static HashMap<String,Process> processServers = new HashMap<>();
     private static HashMap<String,BufferedReader> processServersInput = new HashMap<>();
-    private static ArrayList<Integer> serversPortList = new ArrayList<>();
-    private static ArrayList<Integer> portsBlackList = new ArrayList<>();
-    private static HashMap<String,Integer> serversPort = new HashMap<>();
-    private static Integer cache = 0;
+    public static ArrayList<Integer> serversPortList = new ArrayList<>();
+    public static ArrayList<Integer> portsBlackList = new ArrayList<>();
+    public static HashMap<String,Integer> serversPort = new HashMap<>();
+    public static Integer cache = 0;
     public static HashMap<String, Integer> getServersPort() {
         return serversPort;
     }
@@ -29,7 +31,7 @@ public class ServerInstance {
     public static void addServer(String name){
       serverList.add(name);
     }
-    public static boolean startServer(String name, String pathName, Type type,String Xms,String Xmx,int port){
+    public static boolean startServer(String name, String pathName, Mods type, String Xms, String Xmx, int port){
         updateConfigFile(pathName,name,type,Xms,Xmx,port);
         boolean proxy;
         int servers = 0;
@@ -40,7 +42,7 @@ public class ServerInstance {
         }
 
         if(Main.getInstance().getProxy() == null && !proxy){
-            Console.print(Colors.ANSI_RED()+"Veuillez d'abord allumer le Proxy avant d'ouvir un Serveur.", Level.INFO);
+            be.alexandre01.dreamzon.network.utils.console.Console.print(Colors.ANSI_RED()+"Veuillez d'abord allumer le Proxy avant d'ouvir un Serveur.", Level.INFO);
             return false;
         }
         for (String string : startServerList){
@@ -50,18 +52,18 @@ public class ServerInstance {
                     int num = Integer.parseInt( string.replace(name+"-",""));
                     servers++;
                 } catch (NumberFormatException e) {
-                  Console.print("Une erreur dans la création du serveur",Level.WARNING);
+                  be.alexandre01.dreamzon.network.utils.console.Console.print("Une erreur dans la création du serveur",Level.WARNING);
                    return false;
                 }
             }
         }
 
-        Console.print("");
+        be.alexandre01.dreamzon.network.utils.console.Console.print("");
         // Console.print(Colors.ANSI_RED+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath(), Level.INFO);
         try {
             String finalname =  name+"-"+servers;
 
-            if(type.equals(Type.DYNAMIC)){
+            if(type.equals(Mods.DYNAMIC)){
                 if(Config.contains("temp/"+pathName+"/"+finalname+"/"+name)){
                     Config.removeDir("temp/"+pathName+"/"+finalname+"/"+name);
                 }
@@ -94,10 +96,10 @@ public class ServerInstance {
             }
 
                    // System.out.println(port);
-                if(type.equals(Type.STATIC)){
+                if(type.equals(Mods.STATIC)){
                     changePort("/template/"+pathName,finalname,port,type);
                 }else {
-                    if(type.equals(Type.DYNAMIC)){
+                    if(type.equals(Mods.DYNAMIC)){
                         changePort("/temp/"+pathName,finalname,port,type);
                     }
                 }
@@ -105,11 +107,11 @@ public class ServerInstance {
                     serversPortList.add(port);
                     serversPort.put(finalname,port);
                 }else {
-                if(type.equals(Type.STATIC)){
+                if(type.equals(Mods.STATIC)){
                   //  System.out.println("template/"+pathName);
                     port = getPort("/template/"+pathName,finalname,type);
                 }else{
-                    if(type.equals(Type.DYNAMIC)){
+                    if(type.equals(Mods.DYNAMIC)){
                         port = getPort("temp/"+pathName,finalname,type);
                     }
                 }
@@ -129,10 +131,10 @@ public class ServerInstance {
                         }
                     }
 
-                    if(type.equals(Type.STATIC)){
+                    if(type.equals(Mods.STATIC)){
                         changePort("/template/"+pathName,finalname,port,type);
                     }else {
-                        if(type.equals(Type.DYNAMIC)){
+                        if(type.equals(Mods.DYNAMIC)){
                             changePort("/temp/"+pathName,finalname,port,type);
                         }
                     }
@@ -140,35 +142,35 @@ public class ServerInstance {
                     portsBlackList.add(port);
                     serversPort.put(finalname,port);
                 }else {
-                    Console.print("Le port est déjà utilisé",Level.WARNING);
+                    be.alexandre01.dreamzon.network.utils.console.Console.print("Le port est déjà utilisé",Level.WARNING);
                     return false;
                 }
             }
             Process proc= null;
             String resourcePath = null;
             if(System.getProperty("os.name").startsWith("Windows")){
-                if(type.equals(Type.DYNAMIC)){
+                if(type.equals(Mods.DYNAMIC)){
                     proc = Runtime.getRuntime().exec("cmd /c start java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+Xms+" -Xmx"+Xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
                 }else {
-                    if(type.equals(Type.STATIC)){
+                    if(type.equals(Mods.STATIC)){
                         proc = Runtime.getRuntime().exec("cmd /c start java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+Xms+" -Xmx"+Xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
                     }
                 }
 
             }else {
-                if(type.equals(Type.DYNAMIC)){
+                if(type.equals(Mods.DYNAMIC)){
                     proc = Runtime.getRuntime().exec("screen -dmS "+finalname+" java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+Xms+" -Xmx"+Xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
                 }else {
-                    if(type.equals(Type.STATIC)){
+                    if(type.equals(Mods.STATIC)){
                         proc = Runtime.getRuntime().exec("screen -dmS "+finalname+" java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+Xms+" -Xmx"+Xmx+" -jar " + new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
                     }
                 }
 
 
             }
-            Console.print(Colors.ANSI_GREEN()+"Le serveur viens de démarrer le processus",Level.INFO);
+            be.alexandre01.dreamzon.network.utils.console.Console.print(Colors.ANSI_GREEN()+"Le serveur viens de démarrer le processus",Level.INFO);
 
-             Console.print("Chemins d'accès : "+Colors.ANSI_RESET()+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath(), Level.INFO);
+             be.alexandre01.dreamzon.network.utils.console.Console.print("Chemins d'accès : "+Colors.ANSI_RESET()+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath(), Level.INFO);
 
            // Main.getInstance().processInput = new BufferedWriter(new OutputStreamWriter(proc.getOutputStream()));
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -199,7 +201,7 @@ public class ServerInstance {
 
             return true;
         } catch (Exception e) {
-            Console.print("Le serveur n'a pas pu démarré",Level.WARNING);
+            be.alexandre01.dreamzon.network.utils.console.Console.print("Le serveur n'a pas pu démarré",Level.WARNING);
             e.printStackTrace();
             return false;
         }
@@ -214,17 +216,17 @@ public class ServerInstance {
         }
 
         if(Main.getInstance().getProxy() == null && !proxy){
-            Console.print(Colors.ANSI_RED()+"Veuillez d'abord allumer le Proxy avant d'ouvir un Serveur.", Level.INFO);
+            be.alexandre01.dreamzon.network.utils.console.Console.print(Colors.ANSI_RED()+"Veuillez d'abord allumer le Proxy avant d'ouvir un Serveur.", Level.INFO);
             return;
         }
-        Type type = null;
+        Mods type = null;
         String Xms = null;
         String Xmx = null;
         int port = 0;
         try {
             for (String line : Config.getGroupsLines(System.getProperty("user.dir")+"/template/"+pathName+"/"+name+"/network.yml")){
                 if(line.startsWith("type:")){
-                    type = Type.valueOf(line.replace("type:","").replaceAll(" ",""));
+                    type = Mods.valueOf(line.replace("type:","").replaceAll(" ",""));
                 }
                 if(line.startsWith("xms:")){
                     Xms = line.replace("xms:","").replaceAll(" ","");
@@ -237,7 +239,7 @@ public class ServerInstance {
                 }
             }
         }catch (IOException e){
-           Console.print("Le serveur en question n'est pas encore configuré",Level.WARNING);
+           be.alexandre01.dreamzon.network.utils.console.Console.print("Le serveur en question n'est pas encore configuré",Level.WARNING);
             return;
         }
 
@@ -258,7 +260,7 @@ public class ServerInstance {
      //   Console.print(Colors.ANSI_RED+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath(), Level.INFO);
         try {
             String finalname =  name+"-"+servers;
-            if(type.equals(Type.DYNAMIC)){
+            if(type.equals(Mods.DYNAMIC)){
                 if(Config.contains("temp/"+pathName+"/"+finalname+"/"+name)){
                     Config.removeDir("temp/"+pathName+"/"+finalname+"/"+name);
                 }
@@ -291,10 +293,10 @@ public class ServerInstance {
                     }
 
                  //   System.out.println(port);
-                    if(type.equals(Type.STATIC)){
+                    if(type.equals(Mods.STATIC)){
                         changePort("/template/"+pathName,finalname,port,type);
                     }else {
-                        if(type.equals(Type.DYNAMIC)){
+                        if(type.equals(Mods.DYNAMIC)){
                             changePort("/temp/"+pathName,finalname,port,type);
                         }
                     }
@@ -302,11 +304,11 @@ public class ServerInstance {
                     serversPortList.add(port);
                     serversPort.put(finalname,port);
                 }else {
-                    if(type.equals(Type.STATIC)){
+                    if(type.equals(Mods.STATIC)){
                        // System.out.println("template/"+pathName);
                         port = getPort("/template/"+pathName,finalname,type);
                     }else{
-                        if(type.equals(Type.DYNAMIC)){
+                        if(type.equals(Mods.DYNAMIC)){
                             port = getPort("temp/"+pathName,finalname,type);
                         }
                     }
@@ -326,10 +328,10 @@ public class ServerInstance {
                         }
                     }
 
-                    if(type.equals(Type.STATIC)){
+                    if(type.equals(Mods.STATIC)){
                         changePort("/template/"+pathName,finalname,port,type);
                     }else {
-                        if(type.equals(Type.DYNAMIC)){
+                        if(type.equals(Mods.DYNAMIC)){
                             changePort("/temp/"+pathName,finalname,port,type);
                         }
                     }
@@ -337,26 +339,26 @@ public class ServerInstance {
                     portsBlackList.add(port);
                     serversPort.put(finalname,port);
                 }else {
-                    Console.print("Le port est déjà utilisé",Level.WARNING);
+                    be.alexandre01.dreamzon.network.utils.console.Console.print("Le port est déjà utilisé",Level.WARNING);
                     return;
                 }
             }
             Process proc= null;
             String resourcePath = null;
             if(System.getProperty("os.name").startsWith("Windows")){
-                if(type.equals(Type.DYNAMIC)){
+                if(type.equals(Mods.DYNAMIC)){
                     proc = Runtime.getRuntime().exec("cmd /c start java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+Xms+" -Xmx"+Xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
                 }else {
-                    if(type.equals(Type.STATIC)){
+                    if(type.equals(Mods.STATIC)){
                         proc = Runtime.getRuntime().exec("cmd /c start java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+Xms+" -Xmx"+Xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
                     }
                 }
 
             }else {
-                if(type.equals(Type.DYNAMIC)){
+                if(type.equals(Mods.DYNAMIC)){
                     proc = Runtime.getRuntime().exec("screen -dmS "+finalname+" java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+Xms+" -Xmx"+Xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
                 }else {
-                    if(type.equals(Type.STATIC)){
+                    if(type.equals(Mods.STATIC)){
                         proc = Runtime.getRuntime().exec("screen -dmS "+finalname+" java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+Xms+" -Xmx"+Xmx+" -jar " + new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
                     }
                 }
@@ -364,9 +366,9 @@ public class ServerInstance {
 
             }
 
-            Console.print("Le serveur viens de démarrer le processus",Level.INFO);
+            be.alexandre01.dreamzon.network.utils.console.Console.print("Le serveur viens de démarrer le processus",Level.INFO);
 
-            Console.print("Chemins d'accès : "+Colors.ANSI_RESET()+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath(), Level.INFO);
+            be.alexandre01.dreamzon.network.utils.console.Console.print("Chemins d'accès : "+Colors.ANSI_RESET()+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath(), Level.INFO);
 
 
 
@@ -482,7 +484,7 @@ public class ServerInstance {
         }
     }
 
-    public static boolean changePort(String pathName , String finalname ,int port,Type type){
+    public static boolean changePort(String pathName , String finalname , int port, Mods type){
         String name = finalname.split("-")[0];
         String fileName;
         String checker;
@@ -496,7 +498,7 @@ public class ServerInstance {
             checker = "host: 0.0.0.0:";
         }
         File properties;
-        if(type.equals(Type.DYNAMIC)){
+        if(type.equals(Mods.DYNAMIC)){
             properties = new File(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+finalname+"/"+fileName));
         }else {
             properties = new File(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+fileName));
@@ -508,7 +510,7 @@ public class ServerInstance {
         try {
             BufferedReader file;
             // input the (modified) file content to the StringBuffer "input"
-            if(type.equals(Type.DYNAMIC)){
+            if(type.equals(Mods.DYNAMIC)){
                 file = new BufferedReader( new FileReader(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+finalname+"/"+fileName)));
 
             }else {
@@ -529,7 +531,7 @@ public class ServerInstance {
 
             // write the new string with the replaced line OVER the same file
             FileOutputStream fileOut;
-            if(type.equals(Type.DYNAMIC)){
+            if(type.equals(Mods.DYNAMIC)){
                 fileOut = new FileOutputStream(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+finalname+"/"+fileName));
             }else {
                 fileOut = new FileOutputStream(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+fileName));
@@ -544,7 +546,7 @@ public class ServerInstance {
 
     }
 
-    public static Integer getPort(String pathName,String finalname,Type type){
+    public static Integer getPort(String pathName, String finalname, Mods type){
        // System.out.println(pathName);
         String fileName;
         String checker;
@@ -559,7 +561,7 @@ public class ServerInstance {
         }
         String name = finalname.split("-")[0];
         File properties;
-        if(type.equals(Type.DYNAMIC)){
+        if(type.equals(Mods.DYNAMIC)){
             properties = new File(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+finalname+"/"+fileName));
         }else {
             String path;
@@ -579,7 +581,7 @@ public class ServerInstance {
             // input the (modified) file content to the StringBuffer "input"
     //        System.out.println(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+finalname+"/"+fileName));
             BufferedReader file;
-            if(type.equals(Type.DYNAMIC)){
+            if(type.equals(Mods.DYNAMIC)){
                  file = new BufferedReader( new FileReader(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+finalname+"/"+fileName)));
             }else {
                  file = new BufferedReader( new FileReader(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+fileName)));
@@ -606,7 +608,7 @@ public class ServerInstance {
             file.close();
 
             FileOutputStream fileOut;
-            if(type.equals(Type.DYNAMIC)){
+            if(type.equals(Mods.DYNAMIC)){
                 fileOut = new FileOutputStream(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+finalname+"/"+fileName));
             }else {
                 fileOut = new FileOutputStream(System.getProperty("user.dir")+ Config.getPath(pathName+"/"+name+"/"+fileName));
@@ -647,7 +649,7 @@ public class ServerInstance {
         }
         return;
     }
-    public static void updateConfigFile(String pathName,String finalName, Type type, String Xms, String Xmx, int port){
+    public static void updateConfigFile(String pathName, String finalName, Mods type, String Xms, String Xmx, int port){
       Config.createFile((System.getProperty("user.dir")+"/template/"+pathName+"/"+finalName+"/network.yml"));
         try {
                 PrintWriter writer = new PrintWriter(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+finalName+"/network.yml"),"utf-8");

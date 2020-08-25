@@ -2,14 +2,12 @@ package be.alexandre01.dreamzon.network.commands;
 
 import be.alexandre01.dreamzon.network.Config;
 import be.alexandre01.dreamzon.network.Main;
-import be.alexandre01.dreamzon.network.enums.Type;
-import be.alexandre01.dreamzon.network.utils.Colors;
-import be.alexandre01.dreamzon.network.utils.Console;
+import be.alexandre01.dreamzon.network.enums.Mods;
+import be.alexandre01.dreamzon.network.utils.console.Colors;
+import be.alexandre01.dreamzon.network.utils.console.Console;
 import be.alexandre01.dreamzon.network.utils.ServerInstance;
-import net.md_5.bungee.api.config.ServerInfo;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -25,12 +23,12 @@ public class Add implements CommandsExecutor{
                              Config.createDir("template/"+args[1]+"/"+args[2]);
                              if(args.length == 7){
                                  try {
-                                     ServerInstance.updateConfigFile(args[1],args[2],Type.STATIC,args[4],args[5],Integer.parseInt(args[6]));
+                                     ServerInstance.updateConfigFile(args[1],args[2], Mods.STATIC,args[4],args[5],Integer.parseInt(args[6]));
                                  }catch (Exception e){
                                      Console.print(Colors.ANSI_RED()+"Une erreur c'est produite, certainement car vous avez mal noté le port", Level.SEVERE);
                                  }
                              }else {
-                                 ServerInstance.updateConfigFile(args[1],args[2],Type.STATIC,args[4],args[5],0);
+                                 ServerInstance.updateConfigFile(args[1],args[2], Mods.STATIC,args[4],args[5],0);
                              }
 
                          }else {
@@ -38,13 +36,13 @@ public class Add implements CommandsExecutor{
                                  Config.createDir("template/"+args[1]+"/"+args[2]);
                                  if(args.length == 7){
                                      try {
-                                         ServerInstance.updateConfigFile(args[1],args[2],Type.DYNAMIC,args[4],args[5],Integer.parseInt(args[6]));
+                                         ServerInstance.updateConfigFile(args[1],args[2], Mods.DYNAMIC,args[4],args[5],Integer.parseInt(args[6]));
                                      }catch (Exception e){
                                          Console.print(Colors.ANSI_RED()+"Une erreur c'est produite, certainement car vous avez mal noté le port", Level.SEVERE);
                                      }
 
                                  }else {
-                                     ServerInstance.updateConfigFile(args[1],args[2],Type.DYNAMIC,args[4],args[5],0);
+                                     ServerInstance.updateConfigFile(args[1],args[2], Mods.DYNAMIC,args[4],args[5],0);
                                  }
                              }else {
                                  Console.print(Colors.ANSI_RED()+"[!] add server [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ", Level.INFO);

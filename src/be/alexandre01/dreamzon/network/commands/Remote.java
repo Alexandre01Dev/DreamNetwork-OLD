@@ -1,16 +1,9 @@
 package be.alexandre01.dreamzon.network.commands;
 
 import be.alexandre01.dreamzon.network.Main;
-import be.alexandre01.dreamzon.network.remote.client.Client;
 import be.alexandre01.dreamzon.network.utils.ServerInstance;
-import be.alexandre01.dreamzon.network.utils.Utils;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Remote implements CommandsExecutor {
     @Override
