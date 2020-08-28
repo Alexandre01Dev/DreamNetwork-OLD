@@ -18,17 +18,55 @@ public class Server {
     Mods type;
     String xms;
     String xmx;
+    String pathName;
     int port;
+    boolean isConfig;
     Process proc;
-    public Server(String name, Mods type, String xms, String xmx, int port) {
+    public Server(String name,String pathName, Mods type, String xms, String xmx, int port) {
         this.name = name;
         this.type = type;
-        xms = xms;
-        xmx = xmx;
+        this.xms = xms;
+        this.xmx = xmx;
         this.port = port;
+        this.pathName = pathName;
+        System.out.println(type.name());
     }
 
-    public boolean startServer(String pathName){
+    public Server(String name, String pathName){
+        this.name = name;
+        this.pathName = pathName;
+        try {
+            for (String line : Config.getGroupsLines(System.getProperty("user.dir")+"/template/"+pathName+"/"+name+"/network.yml")){
+                if(line.startsWith("type:")){
+                    this.type = Mods.valueOf(line.replace("type:","").replaceAll(" ",""));
+                }
+                if(line.startsWith("xms:")){
+                    this.xms = line.replace("xms:","").replaceAll(" ","");
+                }
+                if(line.startsWith("xmx:")){
+                    this.xmx = line.replace("xmx:","").replaceAll(" ","");
+                }
+                if(line.startsWith("port:")){
+                    this.port = Integer.parseInt(line.replace("port:","").replaceAll(" ",""));
+                }
+
+                isConfig = true;
+            }
+        }catch (IOException e){
+           Console.print(Colors.ANSI_RED()+"Le serveur en question n'est pas encore configuré",Level.SEVERE);
+           isConfig = false;
+            return;
+        }
+
+    }
+    public void startServer(){
+        if(!start()){
+            Console.print(Colors.ANSI_RED()+"Le serveur n'a pas pu démarré",Level.WARNING);
+        }
+    }
+    private boolean start(){
+        if(!isConfig) return false;
+
         updateConfigFile(pathName,name,type,xms,xmx,port);
         boolean proxy;
         int servers = 0;
@@ -68,13 +106,10 @@ public class Server {
                 Config.copy(new File(Config.getPath(new File(System.getProperty("user.dir")+ Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath())),new File(Config.getPath("temp/"+pathName+"/"+name+"/"+finalname)));
             }
 
-
-
-
             if(port == 0){
 
                 if(!ServerInstance.serversPortList.isEmpty()){
-
+                    
                     for (Integer string : ServerInstance.serversPort.values()){
                         //System.out.println(string);
                     }
@@ -374,5 +409,55 @@ public class Server {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public static void stopServer(String name, String pathName){
+        String finalName = name.split("-")[0];
+        if(ServerInstance.getProcess(name) != null){
+            System.out.println("DESTROY");
+            ServerInstance.getProcess(name).destroy();
+        }
+        if(ServerInstance.getStartServerList().contains(name)){
+            ServerInstance.getStartServerList().remove(name);
+
+        }
+        if(ServerInstance.serversPort.containsKey(name)){
+            int port = ServerInstance.serversPort.get(name);
+            ServerInstance.serversPort.put("cache-"+ServerInstance.cache,port);
+            System.out.println(ServerInstance.serversPort.get("cache-"+ServerInstance.cache));
+            ServerInstance.serversPort.remove(name);
+        }
+
+        if(ServerInstance.getProcessServers().containsKey(name)){
+            ServerInstance.getProcessServers().remove(name);
+        }
+        // System.out.println("temp/"+pathName+"/"+finalName+"/"+name);
+        if(Config.contains("temp/"+pathName+"/"+finalName+"/"+name)){
+
+            Config.removeDir("temp/"+pathName+"/"+finalName+"/"+name);
+        }
+    }
+
+    public Process getProcessus() {
+        return proc;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Mods getType() {
+        return type;
+    }
+
+    public String getXms() {
+        return xms;
+    }
+
+    public String getXmx() {
+        return xmx;
+    }
+
+    public int getPort() {
+        return port;
     }
 }

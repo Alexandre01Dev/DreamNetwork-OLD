@@ -6,6 +6,7 @@ import be.alexandre01.dreamzon.network.enums.Mods;
 import be.alexandre01.dreamzon.network.connection.client.Connect;
 import be.alexandre01.dreamzon.network.utils.console.Colors;
 import be.alexandre01.dreamzon.network.utils.console.Console;
+import be.alexandre01.dreamzon.network.utils.screen.Screen;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -32,7 +33,11 @@ public class ServerInstance {
       serverList.add(name);
     }
     public static boolean startServer(String name, String pathName, Mods type, String Xms, String Xmx, int port){
-        updateConfigFile(pathName,name,type,Xms,Xmx,port);
+        try {
+            updateConfigFile(pathName,name,type,Xms,Xmx,port);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         boolean proxy;
         int servers = 0;
         if(pathName.contains("server")){
@@ -370,7 +375,7 @@ public class ServerInstance {
 
             be.alexandre01.dreamzon.network.utils.console.Console.print("Chemins d'accès : "+Colors.ANSI_RESET()+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath(), Level.INFO);
 
-
+            new Screen(proc).run();
 
             // Main.getInstance().processInput = new BufferedWriter(new OutputStreamWriter(proc.getOutputStream()));
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
@@ -649,9 +654,8 @@ public class ServerInstance {
         }
         return;
     }
-    public static void updateConfigFile(String pathName, String finalName, Mods type, String Xms, String Xmx, int port){
+    public static void updateConfigFile(String pathName, String finalName, Mods type, String Xms, String Xmx, int port) throws Exception {
       Config.createFile((System.getProperty("user.dir")+"/template/"+pathName+"/"+finalName+"/network.yml"));
-        try {
                 PrintWriter writer = new PrintWriter(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+finalName+"/network.yml"),"utf-8");
              //  System.out.println(type.name());
                 if(type != null){
@@ -669,9 +673,6 @@ public class ServerInstance {
                 writer.close();
 
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 }

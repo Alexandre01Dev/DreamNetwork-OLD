@@ -1,6 +1,7 @@
 package be.alexandre01.dreamzon.network.commands;
 
 import be.alexandre01.dreamzon.network.Config;
+import be.alexandre01.dreamzon.network.objects.Server;
 import be.alexandre01.dreamzon.network.utils.console.Colors;
 import be.alexandre01.dreamzon.network.utils.console.Console;
 import be.alexandre01.dreamzon.network.utils.ServerInstance;
@@ -15,7 +16,9 @@ public class Start  implements CommandsExecutor{
             if(args.length == 3){
                 if(args[1].equalsIgnoreCase("server")||args[1].equalsIgnoreCase("proxy")){
                     if(Config.contains("template/"+args[1]+"/"+args[2])){
-                        ServerInstance.startServer(args[2],args[1]);
+                        Server process = new Server(args[2],args[1]);
+                        process.startServer();
+                        //ServerInstance.startServer(args[2],args[1]);
                     }else {
                         Console.print(Colors.ANSI_RED()+"Veuillez d'abord configurer votre serveur avant de faire cela", Level.WARNING);
                     }

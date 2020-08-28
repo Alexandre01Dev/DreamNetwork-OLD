@@ -3,6 +3,7 @@ package be.alexandre01.dreamzon.network.connection.client;
 import be.alexandre01.dreamzon.network.Main;
 import be.alexandre01.dreamzon.network.connection.Remote;
 import be.alexandre01.dreamzon.network.enums.Mods;
+import be.alexandre01.dreamzon.network.objects.Server;
 import be.alexandre01.dreamzon.network.utils.*;
 import be.alexandre01.dreamzon.network.utils.console.Colors;
 import be.alexandre01.dreamzon.network.utils.console.Console;
@@ -174,7 +175,9 @@ public class Client extends Remote {
         }else {
             pathName = "server";
         }
-        ServerInstance.startServer(serverName,pathName, Mods.valueOf(type),Xms,Xmx,0);
+        Server process = new Server(serverName,pathName, Mods.valueOf(type),Xms,Xmx,0);
+        process.startServer();
+     //   ServerInstance.startServer(serverName,pathName, Mods.valueOf(type),Xms,Xmx,0);
         }
         if(data.contains("STOP")){
             String serverName = data.getString("STOP").split(";")[0];

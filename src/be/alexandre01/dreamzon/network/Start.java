@@ -23,32 +23,14 @@ public class Start {
     public static void main(String[] args){
         try {
             System.setOut(new PrintStream(System.out, true, "UTF-8"));
-
-
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        String input = "OuèLALAè";
 
-        final Charset cp1252 = Charset.forName("windows-1252");
-        final Charset utf8 = Charset.forName("UTF-8");
 
-        // lets convert it to bytes in windows-1252:
-        // this gives you 2 bytes: c3 bc
-        // "Ã" ==> c3
-        // "¼" ==> bc
-
-        // but in utf-8, c3 bc is "ü"
-        String fixed = new String( input.getBytes(cp1252),utf8);
-
-        System.out.println(input);
-        System.out.println(fixed);
 
       //  System.out.println("OUéLALè");
         Ansi.setEnabled(true);
-        System.out.println(Ansi.isEnabled());
         try {
             System.setProperty("file.encoding","UTF-8");
             Field charset = Charset.class.getDeclaredField("defaultCharset");
@@ -92,7 +74,6 @@ public class Start {
         //new License();
 
         try {
-            System.out.println("Ok");
             KeyGenerator keyGen = KeyGenerator.getInstance("AES");
             String keyS = "BonjouràToi";
             SecureRandom secRandom = new SecureRandom(keyS.getBytes());

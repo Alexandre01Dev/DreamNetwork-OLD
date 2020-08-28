@@ -24,11 +24,17 @@ public class Add implements CommandsExecutor{
                              if(args.length == 7){
                                  try {
                                      ServerInstance.updateConfigFile(args[1],args[2], Mods.STATIC,args[4],args[5],Integer.parseInt(args[6]));
+                                     Console.print(Colors.ANSI_GREEN()+"Vous venez de configurer le serveur avec succès !");
                                  }catch (Exception e){
                                      Console.print(Colors.ANSI_RED()+"Une erreur c'est produite, certainement car vous avez mal noté le port", Level.SEVERE);
                                  }
                              }else {
-                                 ServerInstance.updateConfigFile(args[1],args[2], Mods.STATIC,args[4],args[5],0);
+                                 try {
+                                     ServerInstance.updateConfigFile(args[1],args[2], Mods.STATIC,args[4],args[5],0);
+                                     Console.print(Colors.ANSI_GREEN()+"Vous venez de configurer le serveur avec succès !");
+                                 } catch (Exception e) {
+                                     Console.print(Colors.ANSI_RED()+"Une erreur c'est produite, certainement car vous avez mal noté le port", Level.SEVERE);
+                                 }
                              }
 
                          }else {
@@ -37,12 +43,18 @@ public class Add implements CommandsExecutor{
                                  if(args.length == 7){
                                      try {
                                          ServerInstance.updateConfigFile(args[1],args[2], Mods.DYNAMIC,args[4],args[5],Integer.parseInt(args[6]));
+                                         Console.print(Colors.ANSI_GREEN()+"Vous venez de configurer le serveur avec succès !");
                                      }catch (Exception e){
                                          Console.print(Colors.ANSI_RED()+"Une erreur c'est produite, certainement car vous avez mal noté le port", Level.SEVERE);
                                      }
 
                                  }else {
-                                     ServerInstance.updateConfigFile(args[1],args[2], Mods.DYNAMIC,args[4],args[5],0);
+                                     try {
+                                         ServerInstance.updateConfigFile(args[1],args[2], Mods.DYNAMIC,args[4],args[5],0);
+                                         Console.print(Colors.ANSI_GREEN()+"Vous venez de configurer le serveur avec succès !");
+                                     }catch (Exception e){
+                                         Console.print(Colors.ANSI_RED()+"Une erreur c'est produite, certainement car vous avez mal noté le port", Level.SEVERE);
+                                     }
                                  }
                              }else {
                                  Console.print(Colors.ANSI_RED()+"[!] add server [name] [DYNAMIC/STATIC] [XMX] [XMS] (PORT) => add a server ", Level.INFO);

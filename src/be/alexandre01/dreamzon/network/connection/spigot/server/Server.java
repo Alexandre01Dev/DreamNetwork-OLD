@@ -169,7 +169,6 @@ public class Server extends Remote {
                         return;
                     }
                 }
-
                 // Utils.remoteClients.remove(this);
                 setAuth(false);
                 sendData(new Message().set("FAIL",true));
