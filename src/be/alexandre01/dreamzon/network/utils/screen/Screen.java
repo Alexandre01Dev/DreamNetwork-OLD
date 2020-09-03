@@ -12,8 +12,6 @@ public class Screen extends Thread {
 
     @Override
     public void run() {
-        System.out.println();
-
         System.setIn(this.process.getInputStream());
         PrintStream pr = new PrintStream(this.process.getOutputStream());
         System.setOut(pr);

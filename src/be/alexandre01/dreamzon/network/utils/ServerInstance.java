@@ -375,7 +375,7 @@ public class ServerInstance {
 
             be.alexandre01.dreamzon.network.utils.console.Console.print("Chemins d'accès : "+Colors.ANSI_RESET()+new File(System.getProperty("user.dir")+Config.getPath("/template/"+name.toLowerCase()+"/"+name+"-"+servers)).getAbsolutePath(), Level.INFO);
 
-            new Screen(proc).run();
+
 
             // Main.getInstance().processInput = new BufferedWriter(new OutputStreamWriter(proc.getOutputStream()));
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));

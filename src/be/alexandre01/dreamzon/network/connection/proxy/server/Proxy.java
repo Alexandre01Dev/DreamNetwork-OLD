@@ -72,8 +72,6 @@ public class Proxy extends Remote {
                     System.out.println("["+ user.getUsername()+"] Tried Command - " + data);
                     sendData("PERM!");
                     sendData("CMD!");*/
-                    Message message = new Message();
-                    message.set("BAN",BungeeMain.instance.getProxy().getPlayer("de"));
 
                     if(data.contains("START")){
                         System.out.println("START");
