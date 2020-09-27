@@ -1,4 +1,4 @@
-main: be.alexandre01.dreamzon.network.connection.proxy.BungeeMain
+main: be.alexandre01.dreamzon.network.proxy.BungeeMain
 author: Alexandre01
 name: Network
 version: 1.0

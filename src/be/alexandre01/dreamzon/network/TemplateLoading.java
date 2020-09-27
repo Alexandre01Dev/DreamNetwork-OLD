@@ -20,7 +20,7 @@ public class TemplateLoading {
         if(directories != null){
             for(File dir : directories){
                 if(Config.contains(dir.getAbsolutePath()+"/spigot.jar") && Config.contains(dir.getAbsolutePath()+"/network.yml") ){
-                    Console.print(Colors.ANSI_GREEN()+"[✓] Template "+ dir.getName()+" loaded !", Level.ALL);
+                    Console.print(Colors.ANSI_GREEN()+"[✓] Template "+ dir.getName()+" loaded !");
                     Utils.templates.add(dir.getName());
                     try {
                         Thread.sleep(250);
@@ -28,7 +28,7 @@ public class TemplateLoading {
                         e.printStackTrace();
                     }
                 }else {
-                    Console.print(Colors.ANSI_RED()+"[!] Template "+ dir.getName()+" is not configured !",Level.ALL);
+                    Console.print(Colors.ANSI_RED()+"[!] Template "+ dir.getName()+" is not configured !");
                     try {
                         Thread.sleep(150);
                     } catch (InterruptedException e) {

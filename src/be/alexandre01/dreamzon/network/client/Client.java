@@ -1,4 +1,4 @@
-package be.alexandre01.dreamzon.network.connection.client;
+package be.alexandre01.dreamzon.network.client;
 
 import be.alexandre01.dreamzon.network.Main;
 import be.alexandre01.dreamzon.network.connection.Remote;
@@ -175,7 +175,7 @@ public class Client extends Remote {
         }else {
             pathName = "server";
         }
-        Server process = new Server(serverName,pathName, Mods.valueOf(type),Xms,Xmx,0);
+        Server process = new Server(serverName,pathName, Mods.valueOf(type),Xms,Xmx,0,proxy);
         process.startServer();
      //   ServerInstance.startServer(serverName,pathName, Mods.valueOf(type),Xms,Xmx,0);
         }
@@ -310,7 +310,8 @@ public class Client extends Remote {
     public void sendInfo(){
         Message message = new Message();
         MessageChannel messageChannel = new MessageChannel("DNServerConfigurator");
-        message.set("NAME",processName);
+        message.setHeader("Identification");
+        message.set("ProcessName",processName);
         message.set("","");
     }
     //ReadData

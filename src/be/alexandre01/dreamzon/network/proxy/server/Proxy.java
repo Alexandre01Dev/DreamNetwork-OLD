@@ -1,8 +1,8 @@
-package be.alexandre01.dreamzon.network.connection.proxy.server;
+package be.alexandre01.dreamzon.network.proxy.server;
 
 import be.alexandre01.dreamzon.network.connection.Remote;
 import be.alexandre01.dreamzon.network.enums.User;
-import be.alexandre01.dreamzon.network.connection.proxy.BungeeMain;
+import be.alexandre01.dreamzon.network.proxy.BungeeMain;
 import be.alexandre01.dreamzon.network.utils.crypter.BasicCrypter;
 import be.alexandre01.dreamzon.network.utils.message.Message;
 import be.alexandre01.dreamzon.network.utils.message.channels.MessageChannel;
@@ -43,10 +43,10 @@ public class Proxy extends Remote {
         configChannel.setupActions(new MessageChannel.ReadChannel() {
             @Override
             public void read(Message message, MessageChannel channel) {
+                System.out.println(message.getHeader());
                 if(message.getHeader().equals("Identification")){
                     setProcessName(message.getString("ProcessName"));
-
-                    
+                    System.out.println("ok -> "+ message.getString("ProcessName"));
                 }
             }
         });

@@ -1,6 +1,6 @@
 package be.alexandre01.dreamzon.network.license.connection;
 
-import be.alexandre01.dreamzon.network.connection.proxy.Proxy;
+import be.alexandre01.dreamzon.network.proxy.Proxy;
 
 import java.net.Socket;
 

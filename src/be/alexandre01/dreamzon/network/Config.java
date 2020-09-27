@@ -134,6 +134,7 @@ public class Config {
 
             ArrayList<String> lines = new ArrayList<>();
             while (line != null) {
+                if(!line.replaceAll(" ","").startsWith("#"))
                 lines.add(line);
                 line = br.readLine();
             }

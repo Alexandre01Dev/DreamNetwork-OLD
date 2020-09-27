@@ -19,6 +19,16 @@ public class Ressource {
     String name;
     String tag;
     String version;
+    int authorId;
+    int downloads;
+    String links;
+    JsonObject file;
+    ArrayList<String> testedVersions;
+    int category;
+    JsonObject rating;
+    int likes;
+
+
     public Ressource(String nameID){
 
     }
@@ -26,6 +36,14 @@ public class Ressource {
         this.name = name;
         this.tag = tag;
         this.version = version;
+        this.authorId = authorId;
+        this.downloads = downloads;
+        this.links = links;
+        this.file = file;
+        this.testedVersions = testedVersions;
+        this.category = category;
+        this.rating = rating;
+        this.likes = likes;
     }
 
 

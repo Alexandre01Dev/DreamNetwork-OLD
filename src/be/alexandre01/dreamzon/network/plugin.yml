@@ -1,4 +1,4 @@
-main: be.alexandre01.dreamzon.network.connection.spigot.SpigotMain
+main: be.alexandre01.dreamzon.network.spigot.SpigotMain
 author: Alexandre01
 name: Network
 version: 1.0

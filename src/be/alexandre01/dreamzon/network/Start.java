@@ -1,12 +1,18 @@
 package be.alexandre01.dreamzon.network;
 
+import be.alexandre01.dreamzon.network.utils.console.Colors;
 import be.alexandre01.dreamzon.network.utils.console.ConciseFormatter;
 import be.alexandre01.dreamzon.network.utils.console.Interceptor;
 import be.alexandre01.dreamzon.network.utils.console.LoggingOutputStream;
 import org.fusesource.jansi.Ansi;
 
 import javax.crypto.KeyGenerator;
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
+import java.awt.event.KeyEvent;
 import java.io.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.security.Key;
@@ -17,57 +23,26 @@ import java.util.logging.Level;
 import java.util.logging.StreamHandler;
 
 public class Start {
-    public static PrintStream defaultStream;
+
 
     public static boolean isStarted = false;
     public static void main(String[] args){
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                System.out.println("DreamNetwork process shutdown ... please wait.");
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         try {
             System.setOut(new PrintStream(System.out, true, "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
-
-
-      //  System.out.println("OUéLALè");
-        Ansi.setEnabled(true);
-        try {
-            System.setProperty("file.encoding","UTF-8");
-            Field charset = Charset.class.getDeclaredField("defaultCharset");
-            charset.setAccessible(true);
-            charset.set(null,null);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-
-        defaultStream = System.out;
-        ByteArrayOutputStream loggerContent = new LoggingOutputStream(Main.getLogger(), Level.ALL);
-        PrintStream prStr = null;
-        prStr = new Interceptor(loggerContent);
-
-        StreamHandler streamHandler = new StreamHandler(prStr, new ConciseFormatter(false));
-
-        final PrintStream err = System.err;
-        Main.getLogger().setUseParentHandlers(false);
-        try {
-            ConciseFormatter c = new ConciseFormatter(false);
-            ConsoleHandler handler = new ConsoleHandler();
-            try {
-                handler.setEncoding("UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            handler.setFormatter(c);
-            handler.flush();
-            Main.getLogger().addHandler( handler);
-            System.setOut(prStr);
-            System.setErr(System.out);
-
-
-        } finally {
-            System.setErr(err);
-        }
 
         //new License();
         System.out.println("Checking License...");
@@ -81,7 +56,6 @@ public class Start {
 
             //Creating/Generating a key
             Key key = keyGen.generateKey();
-
           //  new Crypter(key);
             System.out.println();
 

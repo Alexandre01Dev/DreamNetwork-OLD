@@ -1,8 +1,8 @@
 package be.alexandre01.dreamzon.network.utils;
 
-import be.alexandre01.dreamzon.network.connection.proxy.server.Proxy;
-import be.alexandre01.dreamzon.network.connection.client.Client;
-import be.alexandre01.dreamzon.network.connection.spigot.server.Server;
+import be.alexandre01.dreamzon.network.proxy.server.Proxy;
+import be.alexandre01.dreamzon.network.client.Client;
+import be.alexandre01.dreamzon.network.spigot.server.Server;
 import be.alexandre01.dreamzon.network.utils.message.channels.MessageChannel;
 
 import java.net.Socket;

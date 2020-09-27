@@ -3,10 +3,9 @@ package be.alexandre01.dreamzon.network.utils;
 import be.alexandre01.dreamzon.network.Config;
 import be.alexandre01.dreamzon.network.Main;
 import be.alexandre01.dreamzon.network.enums.Mods;
-import be.alexandre01.dreamzon.network.connection.client.Connect;
+import be.alexandre01.dreamzon.network.client.Connect;
 import be.alexandre01.dreamzon.network.utils.console.Colors;
 import be.alexandre01.dreamzon.network.utils.console.Console;
-import be.alexandre01.dreamzon.network.utils.screen.Screen;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -33,18 +32,19 @@ public class ServerInstance {
       serverList.add(name);
     }
     public static boolean startServer(String name, String pathName, Mods type, String Xms, String Xmx, int port){
-        try {
-            updateConfigFile(pathName,name,type,Xms,Xmx,port);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         boolean proxy;
         int servers = 0;
         if(pathName.contains("server")){
-        proxy = false;
+            proxy = false;
         }else {
             proxy = true;
         }
+        try {
+            updateConfigFile(pathName,name,type,Xms,Xmx,port,proxy);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         if(Main.getInstance().getProxy() == null && !proxy){
             be.alexandre01.dreamzon.network.utils.console.Console.print(Colors.ANSI_RED()+"Veuillez d'abord allumer le Proxy avant d'ouvir un Serveur.", Level.INFO);
@@ -277,9 +277,9 @@ public class ServerInstance {
 
 
             if(port == 0){
-
+System.out.println("option0");
                 if(!serversPortList.isEmpty()){
-
+                    System.out.println("option0.5");
                     for (Integer string : serversPort.values()){
                         //System.out.println(string);
                     }
@@ -325,6 +325,7 @@ public class ServerInstance {
 
             }else {
                 if(!serversPortList.contains(port)){
+                    System.out.println("option1");
                     for(Map.Entry<String,Integer> s : serversPort.entrySet()){
                         if(s.getKey().startsWith("cache-")){
                             port = serversPort.get(s.getKey());
@@ -654,10 +655,11 @@ public class ServerInstance {
         }
         return;
     }
-    public static void updateConfigFile(String pathName, String finalName, Mods type, String Xms, String Xmx, int port) throws Exception {
+    public static void updateConfigFile(String pathName, String finalName, Mods type, String Xms, String Xmx, int port,boolean proxy) throws Exception {
       Config.createFile((System.getProperty("user.dir")+"/template/"+pathName+"/"+finalName+"/network.yml"));
                 PrintWriter writer = new PrintWriter(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+finalName+"/network.yml"),"utf-8");
              //  System.out.println(type.name());
+                writer.println("# DreamNetwork Configuration of "+ finalName);
                 if(type != null){
                     writer.println("type: "+type.name());
                 }
@@ -670,6 +672,8 @@ public class ServerInstance {
                 if(port != 0){
                     writer.println("port: "+port);
                 }
+
+                writer.println("proxy: "+proxy);
                 writer.close();
 
 

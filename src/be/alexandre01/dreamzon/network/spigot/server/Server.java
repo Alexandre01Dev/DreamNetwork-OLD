@@ -1,11 +1,11 @@
-package be.alexandre01.dreamzon.network.connection.spigot.server;
+package be.alexandre01.dreamzon.network.spigot.server;
 
 import be.alexandre01.dreamzon.network.connection.Remote;
 import be.alexandre01.dreamzon.network.enums.User;
-import be.alexandre01.dreamzon.network.connection.spigot.api.NetworkConnectEvent;
-import be.alexandre01.dreamzon.network.connection.spigot.api.NetworkSpigotAPI;
-import be.alexandre01.dreamzon.network.connection.spigot.api.ReadDataEvent;
-import be.alexandre01.dreamzon.network.connection.spigot.api.ReadServerDataEvent;
+import be.alexandre01.dreamzon.network.spigot.api.NetworkConnectEvent;
+import be.alexandre01.dreamzon.network.spigot.api.NetworkSpigotAPI;
+import be.alexandre01.dreamzon.network.spigot.api.ReadDataEvent;
+import be.alexandre01.dreamzon.network.spigot.api.ReadServerDataEvent;
 import be.alexandre01.dreamzon.network.utils.crypter.BasicCrypter;
 import be.alexandre01.dreamzon.network.utils.message.Message;
 import be.alexandre01.dreamzon.network.utils.message.channels.MessageChannel;
