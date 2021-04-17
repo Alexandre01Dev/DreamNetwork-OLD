@@ -1,14 +1,10 @@
 package be.alexandre01.dreamzon.network.utils.screen.stream;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
-public class ScreenOutput extends ByteArrayOutputStream {
-    @Override
-    public void write(int b) {
-
+public class ScreenOutput extends PrintStream {
+    public ScreenOutput(OutputStream out) {
+        super(out);
     }
 
 }

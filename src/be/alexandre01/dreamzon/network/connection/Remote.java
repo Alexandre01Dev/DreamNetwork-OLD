@@ -6,20 +6,15 @@ public class Remote {
         Client,Spigot,Proxy
     }
     private Type type;
-    private Socket socket;
+
     private String processName;
 
-    protected Remote(Type type, Socket socket){
+    protected Remote(Type type){
         this.type = type;
-        this.socket = socket;
         }
 
 public Type getType() {
         return type;
-        }
-
-public Socket getSocket() {
-        return socket;
         }
 
 protected void setProcessName(String processName) {

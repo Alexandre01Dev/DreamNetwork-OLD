@@ -1,11 +1,10 @@
 package be.alexandre01.dreamzon.network;
 
-import be.alexandre01.dreamzon.network.utils.console.Colors;
+import be.alexandre01.dreamzon.network.utils.console.colors.Colors;
 import be.alexandre01.dreamzon.network.utils.console.Console;
 import be.alexandre01.dreamzon.network.utils.Utils;
 
 import java.io.File;
-import java.util.logging.Level;
 
 public class TemplateLoading {
     File[] directories = new File(Config.getPath("template/server/")).listFiles(File::isDirectory);

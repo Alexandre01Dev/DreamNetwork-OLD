@@ -7,6 +7,7 @@ import be.alexandre01.dreamzon.network.spigot.commands.gui.InventoryEvent;
 import be.alexandre01.dreamzon.network.spigot.commands.gui.InventoryManager;
 import be.alexandre01.dreamzon.network.utils.message.Message;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -32,7 +33,6 @@ public class SpigotMain extends JavaPlugin implements Listener {
         getServer().getPluginManager().registerEvents(this,this);
         getServer().getPluginManager().registerEvents(new InventoryEvent(inventoryManager),this);
         getCommand("network").setExecutor(new NetworkCommand());
-
 
     }
 

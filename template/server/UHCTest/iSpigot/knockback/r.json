@@ -1,0 +1,17 @@
+{
+  "name": "r",
+  "editable": true,
+  "type": "regular",
+  "horizontal": 1.0,
+  "vertical": 1.0,
+  "sprint_horizontal": 0.425,
+  "sprint_vertical": 0.085,
+  "vertical_limit": 0.4,
+  "friction": 2.0,
+  "hit_delay": 20,
+  "slowdown": 0.6,
+  "stop_sprint": true,
+  "potion_fall_speed": 0.05,
+  "potion_throw_multiplier": 0.5,
+  "potion_off_set": -20.0
+}

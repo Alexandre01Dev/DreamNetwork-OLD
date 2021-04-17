@@ -8,12 +8,12 @@ import java.util.ArrayList;
 
 public class ProxyInstance {
     public static ArrayList<String> servers = new ArrayList<>();
-    public static void addSpigotServer(String processName, String ip, String port, String motd){
+    public static void addSpigotServer(String processName, String ip, int port, String motd){
         System.out.println(ip);
         System.out.println(port);
-        System.out.println(Integer.parseInt(port));
+
         try {
-            ServerInfo info = ProxyServer.getInstance().constructServerInfo(processName,new InetSocketAddress(ip, Integer.parseInt(port)) , "", false);
+            ServerInfo info = ProxyServer.getInstance().constructServerInfo(processName,new InetSocketAddress(ip,port) , "", false);
 
 
             ProxyServer.getInstance().getServers().put(processName, info);

@@ -1,5 +1,7 @@
 package be.alexandre01.dreamzon.network.proxy.server;
 
+import be.alexandre01.dreamzon.network.client.SocketServer;
+import be.alexandre01.dreamzon.network.client.communication.RequestData;
 import be.alexandre01.dreamzon.network.connection.Remote;
 import be.alexandre01.dreamzon.network.enums.User;
 import be.alexandre01.dreamzon.network.proxy.BungeeMain;
@@ -7,6 +9,8 @@ import be.alexandre01.dreamzon.network.utils.crypter.BasicCrypter;
 import be.alexandre01.dreamzon.network.utils.message.Message;
 import be.alexandre01.dreamzon.network.utils.message.channels.MessageChannel;
 import be.alexandre01.dreamzon.network.utils.Utils;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
 import net.md_5.bungee.BungeeCord;
 import net.md_5.bungee.api.event.ServerSwitchEvent;
 import net.md_5.bungee.event.EventHandler;
@@ -14,27 +18,24 @@ import net.md_5.bungee.event.EventHandler;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Locale;
 
 public class Proxy extends Remote {
-    private Socket client = null;
     private boolean isAuth = false;
     private User user= User.Console;
     private String name;
     private MessageChannel configChannel;
-    public Proxy(Socket client){
-        super(Type.Proxy,client);
+    private ChannelFuture future;
+    public static Proxy proxy;
+    public Proxy(ChannelFuture channelFuture){
+        super(Type.Proxy);
+        this.proxy = this;
+        this.future = channelFuture;
+        //Runnable target;
+       // Thread readData = new Thread(new ReadData(this));
 
-        this.client = client;
-        System.out.println("Adresses => "+ client.getInetAddress().getHostAddress());
-        if(client.getInetAddress().getHostAddress().equals("localhost")){
-
-        }
-
-        Runnable target;
-        Thread readData = new Thread(new ReadData(this));
-
-        readData.start();
-        configChannel = new MessageChannel("DNServerConfigurator",client);
+        //readData.start();
+        configChannel = new MessageChannel("DNServerConfigurator");
         sendData(new Message().set("ALREADY",true));
         String username = "Console";
         String password = "8HetY4474XisrZ2FGwV5z";
@@ -50,6 +51,7 @@ public class Proxy extends Remote {
                 }
             }
         });
+        System.out.println("COnstructor finished");
     }
     @EventHandler
     public void onSwitch(ServerSwitchEvent event){
@@ -76,9 +78,15 @@ public class Proxy extends Remote {
                     if(data.contains("START")){
                         System.out.println("START");
                         String serverName = data.getString("ServerName");
+                        System.out.println(serverName);
                         String ip = data.getString("IP");
-                        String port = data.getString("PORT");
+                        System.out.println(ip);
+                        System.out.println(data.getString("PORT"));
+                        int port = Integer.parseInt(data.getString("PORT"));
+                        System.out.println(port);
                         String motd = data.getString("MOTD");
+
+                        System.out.println(motd);
                         System.out.println(data);
                         ProxyInstance.addSpigotServer(serverName,ip,port,motd);
                     }
@@ -122,17 +130,17 @@ public class Proxy extends Remote {
                 }
 
             }
-            if(data.contains("ADDMAINTENANCE;")){
+            if(data.contains("ADDMAINTENANCE")){
                 System.out.println(data+"...");
-                String playername = data.getString("ADDMAINTENANCE");
+                String playername = data.getString("ADDMAINTENANCE").toLowerCase();
                 if(!BungeeMain.instance.allowedPlayer.contains(playername)){
                     BungeeMain.instance.allowedPlayer.add(playername);
                     BungeeMain.configuration.set("network.allowed-players-maintenance",BungeeMain.instance.allowedPlayer);
                     BungeeMain.instance.saveConfig();
                 }
             }
-            if(data.contains("REMMAINTENANCE;")){
-                String playername = data.getString("REMMAINTENANCE");
+            if(data.contains("REMMAINTENANCE")){
+                String playername = data.getString("REMMAINTENANCE").toLowerCase();
                 if(BungeeMain.instance.allowedPlayer.contains(playername)){
                     BungeeMain.instance.allowedPlayer.remove(playername);
                     BungeeMain.configuration.set("network.allowed-players-maintenance",BungeeMain.instance.allowedPlayer);
@@ -158,14 +166,13 @@ public class Proxy extends Remote {
         if(name != null){
             data.set("PROVIDERS",name);
         }
-        String sData = BasicCrypter.encode(data.toString());
 
             try{
-                OutputStream out = client.getOutputStream();
-
-                PrintWriter writer = new PrintWriter(out);
-                writer.write(sData+"\n");
-                writer.flush();
+                System.out.println("send");
+                RequestData msg = new RequestData();
+                msg.setIntValue(123);
+                msg.setMessageValue(data);
+                ProxySocket.get.setChannelFuture(ProxySocket.get.getChannelFuture().channel().writeAndFlush(msg));
             }catch (Exception e){
                 System.out.println("FAIL #7");
             }
@@ -174,27 +181,43 @@ public class Proxy extends Remote {
         }
 
 
+    public void sendData(Message data, ChannelHandlerContext ctx){
+        if(name != null){
+            data.set("PROVIDERS",name);
+        }
 
+        try{
+            System.out.println("send");
+            RequestData msg = new RequestData();
+            msg.setIntValue(123);
+            msg.setMessageValue(data);
+            ctx.writeAndFlush(msg);
+        }catch (Exception e){
+            System.out.println("FAIL #7");
+        }
+
+
+    }
     public void setUser(User user) {
         this.user = user;
     }
 
     public void auth(Message data){
         try {
-            for(Proxy remotes : Utils.remoteProxyClients){
-                if(remotes.getClient().getInetAddress().equals(client.getInetAddress())){
-                    System.out.println("["+client.getInetAddress().getHostAddress()+"] Already Connected");
+           /* for(Proxy remotes : Utils.remoteProxyClients){
+                if(remotes.getClient().getInetAddress().equals()){
+                    System.out.println("[Client] Already Connected");
                     sendData(new Message().set("ALREADY",true));
                     return;
                 }
-            }
+            }*/
             System.out.println("YES");
           if(data.contains("AUTH")){
 
 
             for(User user : User.values()){
                 if(user.getUsername().equals(data.getString("USERNAME")) && user.getPassword().equals(data.getString("PASSWORD"))){
-                    System.out.println("["+client.getInetAddress().getHostAddress()+"] Successfully Auth");
+                    System.out.println("[Client] Successfully Auth");
                     setUser(user);
                     Utils.remoteProxyClients.add(this);
                     setAuth(true);
@@ -207,8 +230,9 @@ public class Proxy extends Remote {
            // Utils.remoteClients.remove(this);
             setAuth(false);
             sendData(new Message().set("FAIL",true));
-            System.out.println("["+client.getInetAddress().getHostAddress()+"] Fail Auth " + data.getString("USERNAME") + " "+ data.getString("PASSWORD"));
-            client.close();
+            System.out.println("[Client] Fail Auth " + data.getString("USERNAME") + " "+ data.getString("PASSWORD"));
+            ProxySocket.get.getWorkerGroup().shutdownGracefully();
+           // client.close();
         }
         }catch (Exception e){
 
@@ -224,9 +248,7 @@ public class Proxy extends Remote {
 
     //getUser();
 
-    public Socket getClient(){
-        return client;
-    }
+
     public boolean isAuth() {
         return isAuth;
     }

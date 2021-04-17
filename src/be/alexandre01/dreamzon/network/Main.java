@@ -1,13 +1,11 @@
 package be.alexandre01.dreamzon.network;
 
 import be.alexandre01.dreamzon.network.commands.*;
-import be.alexandre01.dreamzon.network.commands.lists.*;
 import be.alexandre01.dreamzon.network.client.Client;
-import be.alexandre01.dreamzon.network.commands.lists.Start;
-import be.alexandre01.dreamzon.network.utils.console.Colors;
+import be.alexandre01.dreamzon.network.spigot.api.NetworkSpigotAPI;
+import be.alexandre01.dreamzon.network.utils.console.colors.Colors;
 import be.alexandre01.dreamzon.network.utils.console.Console;
-import be.alexandre01.dreamzon.network.utils.console.Formatter;
-import be.alexandre01.dreamzon.network.utils.screen.Screen;
+import be.alexandre01.dreamzon.network.utils.console.formatter.Formatter;
 import be.alexandre01.dreamzon.network.utils.screen.ScreenManager;
 
 import java.io.*;
@@ -96,9 +94,15 @@ public class Main {
             //Screen Manager
             ScreenManager.load();
 
+            Console.setDefaultConsole("m:default");
+            Console console = Console.getConsole("m:default");
+            Console.setActualConsole("m:default");
+
+            CommandReader commandReader = new CommandReader(console);
+
             System.out.println("Le Network a été démarré avec succès / Faites help pour avoir les commandes");
-            Thread commandReader = new Thread( new CommandReader(in));
-            commandReader.start();
+
+
         }catch (Exception e){
             e.printStackTrace();
         }

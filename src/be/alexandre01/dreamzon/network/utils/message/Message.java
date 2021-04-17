@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Message extends LinkedHashMap<String, Object> {
+
     private static final Type HASH_MAP_TYPE = new TypeToken<Map<String, Object>>() {
     }.getType();
 
@@ -26,32 +27,49 @@ public class Message extends LinkedHashMap<String, Object> {
     public boolean contains(String key){
         return containsKey("DW-"+key);
     }
+
     public HashMap<String, Object> getObjectData(){
         return this;
     }
+
     public Object getObject(String key){
         return get("DW-"+key);
     }
+
+    public void setChannel(String channel){
+        set("channel",channel);
+    }
+
     public void setHeader(String header){
         set("header",header);
     }
+
     public String getHeader(){
         return getString("header");
     }
+
     public JsonObject toJsonObject() {
         return new Gson().toJsonTree(this).getAsJsonObject();
     }
+
     public String getString(String key){
         return String.valueOf(get("DW-"+key));
     }
+
     public int getInt(String key){
-        return (Integer) get("DW-"+key);
+        return (int) Math.round((double) get("DW-"+key));
     }
+
     public float getFloat(String key){
         return (float) get("DW-"+key);
     }
+
     public boolean getBoolean(String key){
         return (boolean) get("DW-"+key);
+    }
+
+    public boolean hasChannel(){
+        return contains("channel");
     }
 
     public static Message createFromJsonString(String json) {

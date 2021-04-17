@@ -1,0 +1,11 @@
+{
+  "name": "test",
+  "editable": true,
+  "type": "minemenclub",
+  "horizontal": 1.0,
+  "vertical": 1.0,
+  "hit_delay": 20,
+  "pot_fall_speed": 0.05,
+  "pot_throw_multiplier": 0.5,
+  "pot_offset": -20.0
+}

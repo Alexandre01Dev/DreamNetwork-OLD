@@ -1,7 +1,9 @@
 package be.alexandre01.dreamzon.network.spigot.api;
 
 import be.alexandre01.dreamzon.network.enums.Mods;
+import be.alexandre01.dreamzon.network.spigot.SpigotMain;
 import be.alexandre01.dreamzon.network.spigot.SpigotServer;
+import be.alexandre01.dreamzon.network.spigot.server.Server;
 import be.alexandre01.dreamzon.network.utils.message.Message;
 import be.alexandre01.dreamzon.network.utils.message.channels.MessageChannel;
 
@@ -58,7 +60,7 @@ public class NetworkSpigotAPI {
         MessageChannel channel = new MessageChannel(serverName);
         Message message = new Message();
         message.set("CMD",commands);
-
+        message.set("ServerName",serverName);
         channel.sendData(message);
     }
 

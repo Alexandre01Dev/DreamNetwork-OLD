@@ -1,6 +1,8 @@
 package be.alexandre01.dreamzon.network.utils.console;
 
 
+import be.alexandre01.dreamzon.network.utils.console.colors.Colors;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;

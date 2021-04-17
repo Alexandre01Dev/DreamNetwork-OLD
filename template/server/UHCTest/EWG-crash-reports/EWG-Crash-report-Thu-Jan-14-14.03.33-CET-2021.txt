@@ -1,0 +1,25 @@
+---- EpicWorldGenerator Crash Report ----
+Time: Thu Jan 14 14:03:33 CET 2021
+Description: Wrong native minecraft server(NMS) version. This version is made for 1.13.2 -> 1.14.0 You are using 1_8_R3
+
+System details:
+<> Spigot version = git-iSpigot-PaperEdition (MC: 1.8.8)
+<> Plugin version = 8.1.7
+<> Java Version = 11.0.9.1
+
+
+Plugin details:
+<> InazumaUHC - 1.0-SNAPSHOT - [Alexandre01Dev]
+<> EpicWorldGenerator - 8.1.7 - []
+<> UltraPermissions - 4.9.0 - [Tech]
+
+
+
+
+------------------------------------------------------------
+If this is not a configuration fault, report the issue here;
+ >> https://bitbucket.org/DynamicBytes/epicworldgenerator/issues
+
+Upload this crash report to pastebin.com
+and put the link in your issue report.
+------------------------------------------------------------

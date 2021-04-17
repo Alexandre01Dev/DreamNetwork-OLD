@@ -13,29 +13,29 @@ import java.util.Arrays;
 
 public class MessageChannel {
     private String channel = "DreamNetwork";
-    private Socket socket;
     private ArrayList<ReadChannel> reads;
     private String provider = null;
     private boolean isMultiThread = Utils.isMultiThread;
     private ArrayList<Remote> remotes;
     public MessageChannel(){
         System.out.println("CreateChannel");
+        System.out.println(channel);
         Message message = new Message().set("GetChannel",channel);
         remotes = new ArrayList<>();
         reads = new ArrayList<>();
         Utils.messageChannels.put(channel,this);
-        this.socket = Utils.socket;
+
         sendData(message);
     }
 
     public MessageChannel(String channel){
         System.out.println("CreateChannel");
+        System.out.println(channel);
         Message message = new Message().set("GetChannel",channel);
         remotes = new ArrayList<>();
         reads = new ArrayList<>();
         Utils.messageChannels.put(channel,this);
         this.channel = channel;
-        this.socket = Utils.socket;
         sendData(message);
     }
     public MessageChannel(String channel,Socket socket){
@@ -44,17 +44,17 @@ public class MessageChannel {
         reads = new ArrayList<>();
         Utils.messageChannels.put(channel,this);
         this.channel = channel;
-        this.socket = socket;
         sendData(message);
 
     }
     public void sendData(Message data){
-        data.set("Channel",channel);
+       // data.set("Channel",channel);
+        data.setChannel(channel);
         if(provider != null) data.set("Provider",provider);
 
         String sData = BasicCrypter.encode(data.toString());
 
-        try{
+       /* try{
             OutputStream out = socket.getOutputStream();
 
             PrintWriter writer = new PrintWriter(out);
@@ -62,7 +62,7 @@ public class MessageChannel {
             writer.flush();
         }catch (Exception e){
             System.out.println("FAIL #7");
-        }
+        }*/
 
     }
     public void addRemote(Remote remote){

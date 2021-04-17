@@ -33,7 +33,7 @@ public class ReadData extends Thread{
                     while (!remote.getClient().isClosed() && (data = reader.readLine()) != null){
                         if(BasicCrypter.canDecode(data)){
                             Message decryptedData = Message.createFromJsonString(BasicCrypter.decode(data));
-                            if(decryptedData.contains("Channel")){
+                            if(decryptedData.hasChannel()){
                                 String channelKey = decryptedData.getString("Channel");
                                 MessageChannel messageChannel;
                                 if(Utils.messageChannels.containsKey(channelKey)){

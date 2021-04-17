@@ -11,18 +11,14 @@ public class Proxy {
     private static int port = (25565 +1);
 
     public static void startServer(){
-        try {
-            ServerSocket server = new ServerSocket(getPort());
-            setServer(server);
+        // ServerSocket server = new ServerSocket(getPort());
+        //setServer(server);
 
-            System.out.println("La communication à démarré avec succès / PORT :" + getPort());
-            Runnable target;
-            Thread waitForConnection = new Thread(new WaitForConnection());
-            waitForConnection.start();
+        System.out.println("La communication à démarré avec succès / PORT :" + getPort());
+        Runnable target;
+        Thread waitForConnection = new Thread(new WaitForConnection("localhost",port));
+        waitForConnection.start();
 
-        } catch (IOException e) {
-            System.out.println("La communication n'a pas pu démarré");
-        }
     }
     public static void stopServer(){
         try {

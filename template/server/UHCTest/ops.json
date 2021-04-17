@@ -1,0 +1,26 @@
+[
+  {
+    "uuid": "4dc4aa7f-d9ce-4e72-b247-f7640be79fce",
+    "name": "RinnyVR",
+    "level": 4,
+    "bypassesPlayerLimit": false
+  },
+  {
+    "uuid": "38e77667-4294-45d5-810d-0e2a0d7437f0",
+    "name": "ROOFT",
+    "level": 4,
+    "bypassesPlayerLimit": false
+  },
+  {
+    "uuid": "c11ff13f-ed91-43ec-a26d-a686647f3f47",
+    "name": "Alexandre01",
+    "level": 4,
+    "bypassesPlayerLimit": false
+  },
+  {
+    "uuid": "5052a309-eb6a-4bb0-85ac-2cad2b6a51ba",
+    "name": "Nan0uche",
+    "level": 4,
+    "bypassesPlayerLimit": false
+  }
+]

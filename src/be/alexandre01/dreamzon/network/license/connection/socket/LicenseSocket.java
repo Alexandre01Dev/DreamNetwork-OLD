@@ -3,7 +3,7 @@ package be.alexandre01.dreamzon.network.license.connection.socket;
 import be.alexandre01.dreamzon.network.Start;
 import be.alexandre01.dreamzon.network.TemplateLoading;
 import be.alexandre01.dreamzon.network.utils.crypter.BasicCrypter;
-import be.alexandre01.dreamzon.network.utils.console.Colors;
+import be.alexandre01.dreamzon.network.utils.console.colors.Colors;
 import be.alexandre01.dreamzon.network.utils.console.Console;
 
 import java.io.OutputStream;

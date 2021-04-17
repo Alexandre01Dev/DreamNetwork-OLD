@@ -1,0 +1,12 @@
+network:
+  lobby: Lobby
+  slot: 5
+  connexionOnLobby: true
+  maintenance: false
+  kickRedirection:
+    enabled: true
+    server: Lobby
+  status:
+    logo: false
+  allowed-players-maintenance:
+  - alexandre01

@@ -1,0 +1,16 @@
+5 22:54:55 OverAll: 98,3  DoTick: 89,9  TickEntities: 2,8  TickTileEntities: 0,0  Tracker: 5,4  Chunk: 0,0  Players: 0  
+6 22:55:03 OverAll: 3,9  DoTick: 1,2  TickEntities: 2,2  TickTileEntities: 0,0  Tracker: 0,5  Chunk: 0,0  Players: 0  
+7 22:55:33 OverAll: 5,2  DoTick: 0,8  TickEntities: 3,2  TickTileEntities: 0,0  Tracker: 1,0  Chunk: 0,0  Players: 0  
+8 22:56:03 OverAll: 3,4  DoTick: 0,2  TickEntities: 2,9  TickTileEntities: 0,0  Tracker: 0,2  Chunk: 0,0  Players: 4  
+9 22:56:33 OverAll: 3,1  DoTick: 0,2  TickEntities: 2,4  TickTileEntities: 0,0  Tracker: 0,4  Chunk: 0,0  Players: 4  
+10 22:57:03 OverAll: 2,4  DoTick: 0,1  TickEntities: 2,0  TickTileEntities: 0,0  Tracker: 0,2  Chunk: 0,0  Players: 4  
+11 22:57:33 OverAll: 2,5  DoTick: 0,1  TickEntities: 2,0  TickTileEntities: 0,0  Tracker: 0,2  Chunk: 0,0  Players: 4  
+12 22:58:03 OverAll: 2,3  DoTick: 0,1  TickEntities: 1,9  TickTileEntities: 0,0  Tracker: 0,2  Chunk: 0,0  Players: 4  
+13 22:58:33 OverAll: 2,2  DoTick: 0,1  TickEntities: 1,9  TickTileEntities: 0,0  Tracker: 0,2  Chunk: 0,0  Players: 4  
+14 22:59:03 OverAll: 1,5  DoTick: 0,0  TickEntities: 1,3  TickTileEntities: 0,0  Tracker: 0,1  Chunk: 0,0  Players: 0  
+15 22:59:33 OverAll: 1,2  DoTick: 0,0  TickEntities: 1,1  TickTileEntities: 0,0  Tracker: 0,1  Chunk: 0,0  Players: 0  
+16 23:00:03 OverAll: 1,2  DoTick: 0,0  TickEntities: 1,1  TickTileEntities: 0,0  Tracker: 0,1  Chunk: 0,0  Players: 0  
+17 23:00:33 OverAll: 1,1  DoTick: 0,0  TickEntities: 1,0  TickTileEntities: 0,0  Tracker: 0,0  Chunk: 0,0  Players: 0  
+18 23:01:03 OverAll: 1,1  DoTick: 0,0  TickEntities: 1,0  TickTileEntities: 0,0  Tracker: 0,0  Chunk: 0,0  Players: 0  
+19 23:01:33 OverAll: 1,1  DoTick: 0,0  TickEntities: 1,0  TickTileEntities: 0,0  Tracker: 0,0  Chunk: 0,0  Players: 0  
+20 23:02:03 OverAll: 1,1  DoTick: 0,0  TickEntities: 1,0  TickTileEntities: 0,0  Tracker: 0,0  Chunk: 0,0  Players: 0  

@@ -2,6 +2,7 @@ package be.alexandre01.dreamzon.network.commands;
 
 import be.alexandre01.dreamzon.network.Main;
 import be.alexandre01.dreamzon.network.commands.lists.*;
+import be.alexandre01.dreamzon.network.utils.console.Console;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,22 +12,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class CommandReader extends Thread {
+public class CommandReader{
     Commands commands;
-    BufferedReader reader;
-    private String[] args;
+    Console console;
     private boolean stop = false;
 
-    public CommandReader(InputStream in){
+    public CommandReader(Console console){
+        this.console = console;
         commands = new Commands();
-        reader = new BufferedReader(new InputStreamReader(in));
         write("> ");
 
-        try {
-            args = reader.readLine().split(" ");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         commands.addCommands(new Help());
         commands.addCommands(new Add());
         commands.addCommands(new Remove());
@@ -35,24 +30,24 @@ public class CommandReader extends Thread {
         commands.addCommands(new Start());
         commands.addCommands(new Remote());
         commands.addCommands(new Screen());
+        run();
     }
 
-    @Override
+
     public void run(){
-        while (!stop){
-            if(args.length != 0){
-                if(!args[0].equalsIgnoreCase(" ")){
-                    commands.check(args);
+            console.setConsoleAction(new Console.IConsole() {
+                @Override
+                public void listener(String[] args) {
+                    Console.debugPrint(String.valueOf(args.length));
+                    if(args.length != 0){
+                        if(!args[0].equalsIgnoreCase(" ")){
+                            commands.check(args);
+                        }
+                    }
                 }
-            }
+            });
             write("> ");
 
-            try {
-                args = reader.readLine().split(" ");
-            }catch (Exception e){
-
-            }
-        }
     }
 
 

@@ -3,12 +3,17 @@ package be.alexandre01.dreamzon.network.objects;
 import be.alexandre01.dreamzon.network.Config;
 import be.alexandre01.dreamzon.network.Main;
 import be.alexandre01.dreamzon.network.client.Connect;
-import be.alexandre01.dreamzon.network.client.ReadData;
 import be.alexandre01.dreamzon.network.enums.Mods;
-import be.alexandre01.dreamzon.network.utils.console.Colors;
+import be.alexandre01.dreamzon.network.utils.console.colors.Colors;
 import be.alexandre01.dreamzon.network.utils.console.Console;
 import be.alexandre01.dreamzon.network.utils.ServerInstance;
 import be.alexandre01.dreamzon.network.utils.screen.Screen;
+import net.md_5.bungee.BungeeCord;
+import net.md_5.bungee.module.ModuleManager;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 
 import java.io.*;
 import java.util.Map;
@@ -19,6 +24,8 @@ public class Server {
     String name;
     Mods type;
     String xms;
+    String startup = null;
+    String exec = null;
     String xmx;
     String pathName;
     int port = 0;
@@ -34,6 +41,38 @@ public class Server {
         this.proxy = proxy;
         this.pathName = pathName;
         System.out.println(type.name());
+
+        if(proxy){
+            exec = "BungeeCord.jar";
+        }else {
+            exec = "Spigot.jar";
+        }
+
+        try {
+            for (String line : Config.getGroupsLines(System.getProperty("user.dir")+"/template/"+pathName+"/"+name+"/network.yml")){
+                if(line.startsWith("startup:")){
+                    startup = line;
+                    startup = startup.replace("startup:","");
+                    while (startup.charAt(0) == ' '){
+                        startup = startup.substring(1);
+                    }
+                    startup =  startup.replaceAll("%xms%",xms);
+                    startup =  startup.replaceAll("%xmx%",xmx);
+                }
+                if(line.startsWith("executable:")){
+                    exec = line;
+                    exec = exec.replace("executable:","");
+                    exec = exec+".jar";
+                    while (exec.charAt(0) == ' '){
+                        exec = exec.substring(1);
+                    }
+
+                }
+            }
+        isConfig = true;
+        }catch (IOException e){
+        e.printStackTrace();
+        }
     }
 
     public Server(String name, String pathName){
@@ -53,9 +92,31 @@ public class Server {
                 if(line.startsWith("port:")){
                     this.port = Integer.parseInt(line.replace("port:","").replaceAll(" ",""));
                 }
-
                 if(line.contains("proxy: true")){
                     this.proxy = true;
+                }
+                if(proxy){
+                    exec = "BungeeCord.jar";
+                }else {
+                    exec = "Spigot.jar";
+                }
+
+                if(line.startsWith("startup:")){
+                    startup = line;
+                    startup = startup.replace("startup:","");
+                    while (startup.charAt(0) == ' '){
+                        startup = startup.substring(1);
+                    }
+                    startup =  startup.replaceAll("%xms%",xms);
+                    startup = startup.replaceAll("%xmx%",xmx);
+                }
+                if(line.startsWith("executable:")){
+                    exec = line;
+                    exec = exec.replace("executable:","");
+                    while (exec.charAt(0) == ' '){
+                        exec = exec.substring(1);
+                    }
+
                 }
                 isConfig = true;
             }
@@ -66,6 +127,10 @@ public class Server {
         }
 
     }
+
+    public void setPort(int port){
+        this.port = port;
+    }
     public void startServer(){
         if(!start()){
             Console.print(Colors.ANSI_RED()+"Le serveur n'a pas pu démarré",Level.WARNING);
@@ -74,7 +139,7 @@ public class Server {
     private boolean start(){
         if(!isConfig) return false;
 
-        updateConfigFile(pathName,name,type,xms,xmx,port);
+        //updateConfigFile(pathName,name,type,xms,xmx,port);
         boolean proxy;
         int servers = 0;
         if(pathName.contains("server")){
@@ -148,9 +213,13 @@ public class Server {
                     if(type.equals(Mods.STATIC)){
                         // System.out.println("template/"+pathName);
                         port = getPort("/template/"+pathName,finalname,type);
+                        ServerInstance.serversPortList.add(port);
+                        ServerInstance.serversPort.put(finalname,port);
                     }else{
                         if(type.equals(Mods.DYNAMIC)){
-                            port = getPort("temp/"+pathName,finalname,type);
+                            port = getPort("/temp/"+pathName,finalname,type);
+                            ServerInstance.serversPortList.add(port);
+                            ServerInstance.serversPort.put(finalname,port);
                         }
                     }
                 }
@@ -160,6 +229,7 @@ public class Server {
                     System.out.println("option3");
                     for(Map.Entry<String,Integer> s : ServerInstance.serversPort.entrySet()){
                         if(s.getKey().startsWith("cache-")){
+
                             port = ServerInstance.serversPort.get(s.getKey());
                             ServerInstance.serversPort.remove(s.getKey(),s.getValue());
                             break;
@@ -183,25 +253,75 @@ public class Server {
             }
             String resourcePath = null;
             System.out.println("ICI LE CODE EST ACTIVE");
+            if(startup != null){
+                startup = startup.replaceAll("%finalName%",finalname);
+
+
+            }
+
             if(System.getProperty("os.name").startsWith("Windows")){
                 if(type.equals(Mods.DYNAMIC)){
-                    //proc = Runtime.getRuntime().exec("cmd /c start java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
-                    proc = Runtime.getRuntime().exec("java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
+                    if(startup != null){
+                        exec = new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/"+exec;
+                        proc = Runtime.getRuntime().exec(startup,null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
+
+                    }else {
+                        proc = Runtime.getRuntime().exec("cmd /c start java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/"+exec+" nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
+                        startup = startup.replaceAll("%jar%",exec);
+                        //SCREEN proc = Runtime.getRuntime().exec("java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
+                    }
 
                 }else {
                     if(type.equals(Mods.STATIC)){
-                       // proc = Runtime.getRuntime().exec("cmd /c start java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
-                        proc = Runtime.getRuntime().exec("java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
-                        System.out.println("cmd /c start java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/template/"+pathName+"/"+name)));
+                        if(startup != null){
+                            exec = new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/"+exec;
+                            startup = startup.replaceAll("%jar%",exec);
+                            proc = Runtime.getRuntime().exec(startup, null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
+                        }else {
+                            proc = Runtime.getRuntime().exec("cmd /c start java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/"+exec +" nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
+                            //ProcessBuilder pr = new ProcessBuilder("cmd", "/c", "start","java","-Duser.language=fr", "-Djline.terminal=jline.UnsupportedTerminal", "-Xms"+xms,"-Xmx"+xmx,"-jar"+"spigot.jar"+"nogui");
+                            //pr.directory( new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
+                            //Console.debugPrint(pr.directory().getAbsolutePath());
+                            //  SCREEN proc = Runtime.getRuntime().exec("java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
+                            //pr.redirectErrorStream(true);
+                            //pr.inheritIO();
+                            //proc = pr.start();
+                            // System.out.println("cmd /c start java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/template/"+pathName+"/"+name)));
+                        }
+
                     }
                 }
 
             }else {
                 if(type.equals(Mods.DYNAMIC)){
-                    proc = Runtime.getRuntime().exec("screen -dmS "+finalname+" java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
+                    if(startup != null){
+                        exec = new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/"+exec;
+                        startup = startup.replaceAll("%jar%",exec);
+                        System.out.println(startup);
+                        proc = Runtime.getRuntime().exec(startup,null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
+                    }else {
+                        System.out.println("cmd /c start java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/"+exec+" nogui");
+                        System.out.println( new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
+                        // proc = Runtime.getRuntime().exec("java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
+                        proc = Runtime.getRuntime().exec("screen -dmS "+finalname+" java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsolutePath()+"/"+exec +" nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/temp/"+pathName+"/"+name+"/"+finalname)).getAbsoluteFile());
+                    }
+
                 }else {
                     if(type.equals(Mods.STATIC)){
-                        proc = Runtime.getRuntime().exec("screen -dmS "+finalname+" java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
+                        if(startup != null){
+                            exec = new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/"+exec;
+                            startup = startup.replaceAll("%jar%",exec);
+                            System.out.println(startup);
+                            proc = Runtime.getRuntime().exec(startup, null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
+                            System.out.println(startup);
+                        }else {
+                            System.out.println("OK2");
+
+                            // proc = Runtime.getRuntime().exec("java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+ Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/spigot.jar nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
+                            proc = Runtime.getRuntime().exec("screen -dmS "+finalname+" java -Duser.language=fr -Djline.terminal=jline.UnsupportedTerminal -Xms"+xms+" -Xmx"+xmx+" -jar " + new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsolutePath()+"/"+exec +" nogui", null ,  new File(System.getProperty("user.dir")+Config.getPath("/template/"+pathName+"/"+name)).getAbsoluteFile());
+                        }
+
+
                     }
                 }
 
@@ -233,7 +353,7 @@ public class Server {
 
             ServerInstance.getStartServerList().add(finalname);
             ServerInstance.getProcessServers().put(name,proc);
-            System.out.println(port);
+            Console.debugPrint(String.valueOf(port));
             Connect connect = new Connect("localhost",port+1,"Console","8HetY4474XisrZ2FGwV5z",finalname);
             connect.setServer(this);
 
@@ -368,6 +488,7 @@ public class Server {
 
                 }
                 inputBuffer.append(line);
+
                 inputBuffer.append('\n');
             }
             file.close();
@@ -382,7 +503,7 @@ public class Server {
 
             fileOut.write(inputBuffer.toString().getBytes());
             fileOut.close();
-
+            Console.debugPrint("debugPort :" + port);
             return port;
 
         } catch (Exception e) {
@@ -434,6 +555,9 @@ public class Server {
         }
         if(port != 0){
             writer.println("port: "+port);
+        }
+        if(startup != null){
+            writer.println("startup: "+startup);
         }
 
         writer.println("proxy: "+proxy);
@@ -491,5 +615,37 @@ public class Server {
 
     public int getPort() {
         return port;
+    }
+
+    public static void startTest(String typeServer,String name){
+        Cancellable
+            if(typeServer.equalsIgnoreCase("server")||typeServer.equalsIgnoreCase("proxy")){
+                if(Config.contains("template/"+typeServer+"/"+name)){
+                    Server process = new Server(name,typeServer);
+                    process.startServer();
+                    //ServerInstance.startServer(args[2],args[1]);
+                }else {
+                    Console.print(Colors.ANSI_RED()+"Veuillez d'abord configurer votre serveur avant de faire cela", Level.WARNING);
+                }
+            }else {
+                Console.print(Colors.ANSI_RED()+"start [SERVER OR PROXY] ServerName",Level.WARNING);
+            }
+
+    }
+    public static void startTest(String typeServer,String name,int port){
+
+        if(typeServer.equalsIgnoreCase("server")||typeServer.equalsIgnoreCase("proxy")){
+            if(Config.contains("template/"+typeServer+"/"+name)){
+                Server process = new Server(name,typeServer);
+                process.setPort(port);
+                process.startServer();
+                //ServerInstance.startServer(args[2],args[1]);
+            }else {
+                Console.print(Colors.ANSI_RED()+"Veuillez d'abord configurer votre serveur avant de faire cela", Level.WARNING);
+            }
+        }else {
+            Console.print(Colors.ANSI_RED()+"start [SERVER OR PROXY] ServerName",Level.WARNING);
+        }
+
     }
 }

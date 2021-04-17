@@ -38,11 +38,13 @@ public class BungeeMain  extends Plugin implements Listener {
     public boolean connexionOnLobby;
     public static Configuration configuration;
     private ArrayList<Integer> acceptedversion;
+    private int acceptedversionAfter;
     private ScheduledTask task;
     @Override
     public void onEnable() {
         allowedPlayer = new ArrayList<>();
         acceptedversion = new ArrayList<>();
+        acceptedversionAfter = 47;
         acceptedversion.add(47);
         acceptedversion.add(107);
         acceptedversion.add(109);
@@ -175,13 +177,20 @@ public class BungeeMain  extends Plugin implements Listener {
         if(slot != -2){
             if(getProxy().getPlayers().size()-1>= slot){
                 if(!event.getPlayer().hasPermission("network.slot.bypass")){
-                    event.getPlayer().disconnect(new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\n§cServeur plein !"),new TextComponent("\n\n§eVeuillez réessayer plus tard\n"),new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\nplay.octosia.fr\nNetwork System by Alexandre01"));
+                    event.getPlayer().disconnect(
+                            new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\n§cServeur plein !"),
+                            new TextComponent("\n\n§eVeuillez réessayer plus tard\n"),
+                            new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*§9\nplay.inazumauhc.fr\nNetwork System by Alexandre01"));
+
                     event.setCancelled(true);
                 }
             }
             if(isMaintenance){
                 if(!allowedPlayer.contains(event.getPlayer().getName().toLowerCase()) && !event.getPlayer().hasPermission("network.maintenance.bypass")){
-                    event.getPlayer().disconnect(new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\n§cServeur en maintenance!"),new TextComponent("\n\n§eVeuillez réessayer plus tard\n"),new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\nplay.octosia.fr\nNetwork System by Alexandre01"));
+                    event.getPlayer().disconnect(
+                            new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\n§cServeur en maintenance!"),
+                            new TextComponent("\n\n§eVeuillez réessayer plus tard\n"),
+                            new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*§9\nplay.inazumauhc.fr\nNetwork System by Alexandre01"));
                     event.setCancelled(true);
                 }
             }
@@ -189,7 +198,7 @@ public class BungeeMain  extends Plugin implements Listener {
         }else {
             if(isMaintenance){
                 if(!allowedPlayer.contains(event.getPlayer().getName().toLowerCase()) && !event.getPlayer().hasPermission("network.maintenance.bypass")){
-                    event.getPlayer().disconnect(new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\n§cServeur en maintenance!"),new TextComponent("\n\n§eVeuillez réessayer plus tard\n"),new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\nplay.octosia.fr\nNetwork System by Alexandre01"));
+                    event.getPlayer().disconnect(new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*\n§cServeur en maintenance!"),new TextComponent("\n\n§eVeuillez réessayer plus tard\n"),new TextComponent("§8§m*------§7§m------§7§m-§b§m-----------§7§m-§7§m------§8§m------*§9\nplay.inazumauhc.fr\nNetwork System by Alexandre01"));
                     event.setCancelled(true);
                 }
             }
@@ -312,9 +321,9 @@ public class BungeeMain  extends Plugin implements Listener {
         TextComponent header = new TextComponent();
         TextComponent footer = new TextComponent();
         if(i == 0){
-            header.addExtra("   §6▰▰▰▰▰▰▰▰▰▰▰ §e§lOctosia §6▰▰▰▰▰▰▰▰▰▰▰");
+            header.addExtra("   §6▰▰▰▰▰▰▰▰▰▰▰ §e§lInazumaUHC §6▰▰▰▰▰▰▰▰▰▰▰");
         }else {
-            header.addExtra("   §e▰▰▰▰▰▰▰▰▰▰▰ §6§lOctosia §e▰▰▰▰▰▰▰▰▰▰▰");
+            header.addExtra("   §e▰▰▰▰▰▰▰▰▰▰▰ §6§lInazumaUHC §e▰▰▰▰▰▰▰▰▰▰▰");
         }
 
         header.addExtra("\n\n");
@@ -323,8 +332,8 @@ public class BungeeMain  extends Plugin implements Listener {
         footer.addExtra("\n");
         footer.addExtra("§2Ping : §a"+ player.getPing());
         footer.addExtra("\n\n");
-        footer.addExtra("§7Site: §ewww.octosia.fr\n");
-        footer.addExtra("§7Discord: §ediscord.gg/3DSHN2g");
+        footer.addExtra("§7Site: §ewww.inazumauhc.fr\n");
+        footer.addExtra("§7Discord: §ediscord.inazumauhc.fr");
         player.setTabHeader(header,footer);
     }
     @EventHandler(priority = EventPriority.LOWEST)
@@ -334,7 +343,18 @@ public class BungeeMain  extends Plugin implements Listener {
         final ServerPing.Players players = srvPing.getPlayers();
 
 
-        players.setSample(new ServerPing.PlayerInfo[]{new ServerPing.PlayerInfo("§7§m-----------------", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §e §c §a §2 §5 §b §6 §6Octosia", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §eEvents§7:", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()), new ServerPing.PlayerInfo("§7» §eKOTH", UUID.randomUUID()), new ServerPing.PlayerInfo("§7» §cIsland", UUID.randomUUID()), new ServerPing.PlayerInfo("§7» §9Raffinerie", UUID.randomUUID()),new ServerPing.PlayerInfo("§7» §8?", UUID.randomUUID()),new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §eSite§7:", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §b§owww.octosia.fr", UUID.randomUUID()), new ServerPing.PlayerInfo("§7 §b §4", UUID.randomUUID()),new ServerPing.PlayerInfo("§7§m-----------------", UUID.randomUUID())});
+        players.setSample(new ServerPing.PlayerInfo[]{
+                new ServerPing.PlayerInfo("§7§m-----------------", UUID.randomUUID()),
+                new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()),
+                new ServerPing.PlayerInfo("§7 §e §c §a §2 §5 §b §6 §9InazumaUHC", UUID.randomUUID()),
+                new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()),
+                new ServerPing.PlayerInfo("§7 §eClassico§7:", UUID.randomUUID()),
+                new ServerPing.PlayerInfo("§7 §4 §c §e", UUID.randomUUID()),
+                new ServerPing.PlayerInfo("§7» §eMDJ CUSTOM", UUID.randomUUID()),
+                new ServerPing.PlayerInfo("§7 §eSite§7:", UUID.randomUUID()),
+                new ServerPing.PlayerInfo("§7 §b§owww.inazumauhc.fr", UUID.randomUUID()),
+                new ServerPing.PlayerInfo("§7 §b §4", UUID.randomUUID()),
+                new ServerPing.PlayerInfo("§7§m-----------------", UUID.randomUUID())});
 
         if(slot != -2 && slot <= players.getOnline()){
             srvPing.setPlayers(new ServerPing.Players(slot,players.getOnline(),players.getSample()));
@@ -342,15 +362,15 @@ public class BungeeMain  extends Plugin implements Listener {
             srvPing.setPlayers(new ServerPing.Players(players.getOnline()+1,players.getOnline(),players.getSample()));
         }
 
-        version.setName("§6Octosia §7[§e1.8 §f-> §61.12.2§7]");
-        if(!acceptedversion.contains(e.getConnection().getVersion())){
+        version.setName("§6InazumaUHC §7[§e1.8 §f-> §61.12.2§7]");
+        if(!acceptedversion.contains(e.getConnection().getVersion()) || acceptedversionAfter >= e.getConnection().getVersion()){
             version.setProtocol(999);
         }
 
         srvPing.setVersion(version);
         TextComponent component = new TextComponent();
-        component.addExtra("    §e§l✯ §6§lOctosia §e§l✯ §6Serveur §c§lPvP Faction §f§n§lFarm2Win\n");
-        component.addExtra("            §e▅▆▇ §6§l150€ de §4§lCash Prize §e▇▆▅");
+        component.addExtra("    §e§l✯ §9§lInazumaUHC §e§l✯ §f§n§l\n");
+        component.addExtra("            §e▅▆▇ §6§lClassico §f|§9 Inazuma §f|§a Autres  §e▇▆▅");
         srvPing.setDescriptionComponent(component);
         String address = e.getConnection().getAddress().toString().substring(1).split(":")[0].replace(".","-");
         if(logoStatus){

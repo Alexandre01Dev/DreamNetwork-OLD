@@ -7,9 +7,10 @@ public class Connect {
     Server server = null;
     public Connect(String adresse,int port,String username,String password,String processName){
         try {
-            System.out.println(port);
+            System.out.println("CONNECT>>"+port);
            threadConnection = new ThreadConnection(adresse,port,username,password,processName);
-           threadConnection.timer();
+            System.out.println(processName);
+           new Thread(threadConnection).start();
            if(server != null)
                threadConnection.setServer(server);
         }catch (Exception e){

@@ -29,6 +29,7 @@ public class ScreenManager {
     }
     public void watch(String server){
         Console.clearConsole();
-        screens.get(server).screenStream.init();
+        //A PATCH
+       screens.get(server).screenStream.init(server,screens.get(server));
     }
 }

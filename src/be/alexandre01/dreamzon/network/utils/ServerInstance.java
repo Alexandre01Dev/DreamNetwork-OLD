@@ -4,7 +4,7 @@ import be.alexandre01.dreamzon.network.Config;
 import be.alexandre01.dreamzon.network.Main;
 import be.alexandre01.dreamzon.network.enums.Mods;
 import be.alexandre01.dreamzon.network.client.Connect;
-import be.alexandre01.dreamzon.network.utils.console.Colors;
+import be.alexandre01.dreamzon.network.utils.console.colors.Colors;
 import be.alexandre01.dreamzon.network.utils.console.Console;
 
 import java.io.*;

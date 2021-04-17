@@ -1,3 +1,5 @@
+# DreamNetwork Configuration of proxy
 type: STATIC
-xms: 1G
-xmx: 2G
+xms: 512M
+xmx: 512M
+proxy: true

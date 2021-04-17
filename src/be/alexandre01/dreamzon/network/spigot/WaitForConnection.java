@@ -14,7 +14,7 @@ public class WaitForConnection extends Thread{
                 if(client.getInetAddress().getHostAddress().equalsIgnoreCase("127.0.0.1")){
                     System.out.println("[" + client.getInetAddress().getHostName()+"] Client Connected => Try Auth");
 
-                    Server remoteClass = new Server(client);
+                    Server remoteClass = new Server();
                     SpigotServer.setServer(remoteClass);
                 }else {
                     System.out.println("[" + SpigotServer.getServerSocket().getInetAddress().getHostAddress()+"] Client Disconnect");

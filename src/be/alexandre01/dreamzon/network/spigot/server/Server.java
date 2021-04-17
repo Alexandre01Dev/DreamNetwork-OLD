@@ -15,6 +15,9 @@ import org.bukkit.Bukkit;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Server extends Remote {
     private Socket client = null;
@@ -29,8 +32,8 @@ public class Server extends Remote {
         System.out.println(name.split("-")[0]);
         return name.split("-")[0];
     }
-    public Server(Socket client){
-        super(Type.Spigot,client);
+    public Server(){
+        super(Type.Spigot);
         this.client = client;
 
         Runnable target;
@@ -72,6 +75,7 @@ public class Server extends Remote {
                     sendData("CMD!");*/
 
                     if (data.contains("CMD")){
+                        System.out.println(data);
                         String[] splitter =data.getString("CMD").split(" ");
                         if(splitter[0].equalsIgnoreCase("stop")){
                             Bukkit.shutdown();
@@ -84,7 +88,7 @@ public class Server extends Remote {
                         StringBuffer sb = new StringBuffer();
 
                         for(String s : splitter){
-                            sb.append(s);
+                            sb.append(s+" ");
                         }
 
                         System.out.println(sb.toString());
@@ -97,20 +101,33 @@ public class Server extends Remote {
             }
 
             if (data.contains("NAME")){
-                    name = data.getString("Name");
-                  System.out.println("Nom du processus : "+name );
+                System.out.println(data);
+                    name = data.getString("NAME");
+                  System.out.println("Nom du processus! : "+name );
                 Bukkit.getPluginManager().callEvent(new NetworkConnectEvent());
               }
 
             if(data.contains("ADDSERVERLIST")){
-                NetworkSpigotAPI.addServerToList(data.getString("ServerName"));
+                System.out.println(data);
+                NetworkSpigotAPI.addServerToList(data.getString("ADDSERVERLIST"));
                /* if(!NetworkSpigotAPI.getTemplateServers().contains(data.split(";")[1].split("-")[0])){
                     NetworkSpigotAPI.addTemplateServerToList(data.split(";")[1].split("-")[0]);
                 }*/
 
             }
             if(data.contains("ADDTEMPLATELIST")){
-                NetworkSpigotAPI.addTemplateServerToList(data.getString("ServerName"));
+                System.out.println(data);
+                if (!(data.get("ADDTEMPLATELIST") instanceof ArrayList)) {
+                }
+                List<Object> a = Arrays.asList(data.get("ADDTEMPLATELIST"));
+                for(Object b : a){
+                    if(b instanceof String){
+                        System.out.println(b+"array");
+                        NetworkSpigotAPI.addTemplateServerToList((String) b);
+                    }
+
+                }
+
 
             }
             if(data.contains("REMSERVERLIST")){
@@ -152,7 +169,8 @@ public class Server extends Remote {
             for(Server remotes : Utils.remoteClients){
                 if(remotes.getClient().getInetAddress().equals(client.getInetAddress())){
                     System.out.println("["+client.getInetAddress().getHostAddress()+"] Already Connected");
-                    sendData(new Message().set("ALREADY",true));
+                        //sendData(new Message().set("ALREADY",true));
+                        //client.close();
                     return;
                 }
             }
@@ -164,7 +182,7 @@ public class Server extends Remote {
                         setUser(user);
                         Utils.remoteClients.add(this);
                         setAuth(true);
-                        sendData(new Message().set("PROXY",true));
+                        sendData(new Message().set("PROXY",false));
                         sendData(new Message().set("OK!",true));
                         return;
                     }

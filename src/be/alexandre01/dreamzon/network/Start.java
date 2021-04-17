@@ -1,26 +1,12 @@
 package be.alexandre01.dreamzon.network;
 
-import be.alexandre01.dreamzon.network.utils.console.Colors;
-import be.alexandre01.dreamzon.network.utils.console.ConciseFormatter;
-import be.alexandre01.dreamzon.network.utils.console.Interceptor;
-import be.alexandre01.dreamzon.network.utils.console.LoggingOutputStream;
-import org.fusesource.jansi.Ansi;
+import be.alexandre01.dreamzon.network.utils.console.Console;
 
 import javax.crypto.KeyGenerator;
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
-import java.awt.event.KeyEvent;
 import java.io.*;
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.reflect.Field;
-import java.nio.charset.Charset;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.StreamHandler;
 
 public class Start {
 
@@ -29,7 +15,7 @@ public class Start {
     public static void main(String[] args){
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-                System.out.println("DreamNetwork process shutdown ... please wait.");
+                System.out.println("DreamNetwork process shutdown, please wait...");
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
@@ -49,6 +35,10 @@ public class Start {
         //new License();
 
         try {
+            Console.setDefaultConsole("m:default");
+            Console.load("m:default");
+            Console.setActualConsole("m:default");
+
             KeyGenerator keyGen = KeyGenerator.getInstance("AES");
             String keyS = "BonjouràToi";
             SecureRandom secRandom = new SecureRandom(keyS.getBytes());

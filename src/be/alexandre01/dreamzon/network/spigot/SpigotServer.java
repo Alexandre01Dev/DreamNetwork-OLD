@@ -1,5 +1,6 @@
 package be.alexandre01.dreamzon.network.spigot;
 
+import be.alexandre01.dreamzon.network.utils.Utils;
 import org.bukkit.Bukkit;
 
 import java.io.IOException;
@@ -49,6 +50,7 @@ public class SpigotServer {
     }
     public static void setServer(be.alexandre01.dreamzon.network.spigot.server.Server server){
         SpigotServer.server = server;
+       /// Utils.socket = server.getClient();
     }
     public static be.alexandre01.dreamzon.network.spigot.server.Server getServer(){
         return server;

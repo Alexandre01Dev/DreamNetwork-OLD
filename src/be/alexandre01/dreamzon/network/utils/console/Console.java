@@ -1,26 +1,89 @@
 package be.alexandre01.dreamzon.network.utils.console;
 
 import be.alexandre01.dreamzon.network.Main;
+import be.alexandre01.dreamzon.network.utils.console.colors.Colors;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-public class Console extends Thread {
-    private static Console instance;
-    private InputStream in;
-    private final ArrayList<String> history;
-    public static void load(InputStream in){
-        if(instance!=null)
-            instance = new Console(in);
+public class Console extends Thread{
+    public interface IConsole{
+        public void listener(String[] args);
     }
+    IConsole iConsole;
+    private static final HashMap<String, Console> instances = new HashMap<>();
+    private ConsoleReader consoleReader = new ConsoleReader();
+    public String name;
+    private final ArrayList<ConsoleMessage> history;
+    public static String defaultConsole;
+    public static String actualConsole;
+
+    public static Console load(String name){
+        Console c = new Console(name);
+        instances.put(name,c);
+        new Thread(c).start();
+        return c;
+    }
+    public static void setActualConsole(String name){
+        if(actualConsole != null){
+            Console oldConsole = instances.get(actualConsole);
+             oldConsole.stop();
+        }
+
+        Console console = instances.get(name);
+        Console.actualConsole = name;
+        if(!console.history.isEmpty()){
+            for (ConsoleMessage s : console.history){
+                console.forcePrint(s.content,s.level);
+            }
+        }
+        if(!console.isAlive()){
+            new Thread(console).start();
+        }
+
+
+
+    }
+
+    public static void setDefaultConsole(String defaultConsole) {
+        if(Console.defaultConsole != null)
+            instances.get(defaultConsole).stop();
+        Console.defaultConsole = defaultConsole;
+    }
+
+    public static Console getConsole(String name) {
+        return instances.get(name);
+    }
+
     public static void print(String s, Level level){
-        Main.getLogger().info(s + Colors.ANSI_RESET());
+        instances.get("m:default").fPrint(s + Colors.ANSI_RESET(),level);
+    }
+    public static void print(String s, Level level,String name){
+        instances.get(name).fPrint(s + Colors.ANSI_RESET(),level);
+    }
+    private void forcePrint(String s,Level level){
+        if(Console.actualConsole.equals(name))
+            Main.getLogger().info(s + Colors.ANSI_RESET());
+    }
+    public void fPrint(String s,Level level){
+        if(Console.actualConsole.equals(name)){
+            Main.getLogger().info(s + Colors.ANSI_RESET());
+        }
+
+
+        refreshHistory(s + Colors.ANSI_RESET(),level);
     }
     public static void print(String s){
        System.out.println(s + Colors.ANSI_RESET());
+    }
+
+    public static void debugPrint(String s){
+        Main.getInstance().formatter.getDefaultStream().println(s + Colors.ANSI_RESET());
     }
     public static void clearConsole(){
         try
@@ -41,22 +104,33 @@ public class Console extends Thread {
 
         }
     }
-    public Console(InputStream in){
-        this.in = in;
+    
+    public void setConsoleAction(IConsole iConsole){
+        this.iConsole = iConsole;
+    }
+    public Console(String name){
         this.history = new ArrayList<>();
+        this.name = name;
     }
     @Override
     public void run() {
-        String data = null;
-
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
         try {
             while (true){
-                while ((data = bufferedReader.readLine()) != null){
-                    if(history.size() > 25){
-                        history.remove(0);
-                    }
-                    history.add(data);
+                if(actualConsole == null || !instances.containsKey(actualConsole))
+                    actualConsole = defaultConsole;
+
+                if(Console.actualConsole.equals(name)){
+
+                String[] args = new String[0];
+                try {
+                    args = consoleReader.reader.readLine().split(" ");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                    iConsole.listener(args);
+                //debugPrint("test >");
+                   write("> ");
+
                 }
             }
         }catch (Exception e){
@@ -64,7 +138,44 @@ public class Console extends Thread {
         }
     }
 
-    public ArrayList<String> getHistory() {
+    public ArrayList<ConsoleMessage> getHistory() {
         return history;
+    }
+    public void refreshHistory(String data,Level lvl){
+        if(history.size() >= 25){
+            history.remove(0);
+        }
+        //debugPrint("history >> "+data);
+        history.add(new ConsoleMessage(data,lvl));
+    }
+
+    public void destroy(){
+        history.clear();
+        instances.remove(name);
+    }
+
+    public void write(String str){
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+        scheduler.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Main.getInstance().formatter.getDefaultStream().write(stringToBytesASCII(str));
+                    scheduler.shutdown();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        },50,50, TimeUnit.MILLISECONDS);
+
+    }
+    public static byte[] stringToBytesASCII(String str) {
+        char[] buffer = str.toCharArray();
+        byte[] b = new byte[buffer.length];
+        for (int i = 0; i < b.length; i++) {
+            b[i] = (byte) buffer[i];
+        }
+        return b;
     }
 }

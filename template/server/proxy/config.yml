@@ -1,0 +1,62 @@
+listeners:
+- query_port: 25575
+  query_enabled: false
+  proxy_protocol: false
+  forced_hosts:
+    pvp.md-5.net: pvp
+  ping_passthrough: false
+  priorities:
+  - lobby
+  bind_local_address: true
+  host: 0.0.0.0:25565
+  max_players: 100
+  tab_size: 60
+  force_default_server: false
+  motd: \u00A74[\u00A79\u00A7lInazuma\u00A74]\u00A76 -\u00A78 [\u00A76\u00A7l1.8\u00A7a
+    \u27A1\u00A76\u00A7l 1.17\u00A78] \u00A7bdiscord.gg/FTZSbx\n              \u00A74\u00A7l\u226B\u00A72\u00A7lSOON
+    NEW MDJ...\u00A74\u00A7l\u226A
+  tab_list: GLOBAL_PING
+remote_ping_cache: -1
+network_compression_threshold: 256
+permissions:
+  admin:
+  - bungeecord.command.server
+  - bungeecord.command.list
+  - bungeecord.command.alert
+  - bungeecord.command.end
+  - bungeecord.command.ip
+  - bungeecord.command.reload
+  - bungeecord.command.send
+log_pings: true
+connection_throttle_limit: 3
+server_connect_timeout: 5000
+timeout: 30000
+stats: 0db8a911-f773-495f-865c-f8761b1941d1
+player_limit: 100
+ip_forward: true
+groups:
+  Nan0uche:
+  - admin
+  Alexandre01:
+  - admin
+remote_ping_timeout: 5000
+connection_throttle: 4000
+log_commands: true
+prevent_proxy_connections: false
+online_mode: true
+forge_support: false
+disabled_commands:
+- disabledcommandhere
+servers:
+  lobby:
+    motd: '&1Lobby'
+    address: localhost:25566
+    restricted: false
+  server1:
+    motd: '&1UHC'
+    address: localhost:25567
+    restricted: false
+  UHCTEST:
+    motd: '&1UHC'
+    address: localhost:25569
+    restricted: false

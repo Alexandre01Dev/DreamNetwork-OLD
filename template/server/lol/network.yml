@@ -1,0 +1,5 @@
+# DreamNetwork Configuration of lol
+type: DYNAMIC
+xms: 1G
+xmx: 1G
+proxy: false

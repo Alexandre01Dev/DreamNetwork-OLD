@@ -1,7 +1,7 @@
 package be.alexandre01.dreamzon.network.commands.lists;
 
 import be.alexandre01.dreamzon.network.commands.CommandsExecutor;
-import be.alexandre01.dreamzon.network.utils.console.Colors;
+import be.alexandre01.dreamzon.network.utils.console.colors.Colors;
 import be.alexandre01.dreamzon.network.utils.console.Console;
 import be.alexandre01.dreamzon.network.utils.screen.ScreenManager;
 

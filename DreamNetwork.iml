@@ -5,9 +5,9 @@
       <configuration>
         <userChosenTypes>
           <map>
-            <entry key="PAPER" value="false" />
-            <entry key="SPIGOT" value="false" />
             <entry key="BUKKIT" value="false" />
+            <entry key="SPIGOT" value="false" />
+            <entry key="PAPER" value="false" />
           </map>
         </userChosenTypes>
         <autoDetectTypes>
@@ -29,5 +29,7 @@
     <orderEntry type="library" name="BungeeCord" level="project" />
     <orderEntry type="library" name="JPremium" level="project" />
     <orderEntry type="library" name="TCPShield" level="project" />
+    <orderEntry type="library" name="sentry-3.0.0" level="project" />
+    <orderEntry type="library" name="gson-2.8.6" level="project" />
   </component>
 </module>

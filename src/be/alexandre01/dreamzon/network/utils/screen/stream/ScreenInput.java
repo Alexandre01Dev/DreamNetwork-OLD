@@ -12,6 +12,4 @@ public class ScreenInput extends ByteArrayInputStream {
     public ScreenInput(byte[] buf) {
         super(buf);
     }
-
-
 }

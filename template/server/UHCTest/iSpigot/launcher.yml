@@ -1,0 +1,11 @@
+restart_command: STOP
+restart_script: ./start.sh
+auto_update_snapshot: false
+no_launch_controller_waiting: false
+download_threads: 1
+auto_update_list:
+- SPIGOT
+- LAUNCHER
+- VIAVERSION
+- VIAREWIND
+license: MIP4-V38C-5S00-L4W9
