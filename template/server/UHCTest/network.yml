@@ -1,5 +1,0 @@
-# DreamNetwork Configuration of Spigot
-type: DYNAMIC
-xms: 1G
-xmx: 5G
-proxy: false

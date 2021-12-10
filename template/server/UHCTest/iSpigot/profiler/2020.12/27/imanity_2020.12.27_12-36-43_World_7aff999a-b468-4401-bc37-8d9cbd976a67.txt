@@ -1,5 +1,0 @@
-136 12:36:43 OverAll: 90,5  DoTick: 86,2  TickEntities: 2,0  TickTileEntities: 0,0  Tracker: 2,1  Chunk: 0,0  Players: 1  
-137 12:36:45 OverAll: 2,6  DoTick: 1,2  TickEntities: 1,1  TickTileEntities: 0,0  Tracker: 0,2  Chunk: 0,0  Players: 0  
-138 12:36:52 OverAll: 7,4  DoTick: 1,7  TickEntities: 5,3  TickTileEntities: 0,0  Tracker: 0,4  Chunk: 0,0  Players: 1  
-139 12:37:22 OverAll: 1,5  DoTick: 0,4  TickEntities: 1,0  TickTileEntities: 0,0  Tracker: 0,0  Chunk: 0,0  Players: 1  
-140 12:37:52 OverAll: 1,1  DoTick: 0,3  TickEntities: 0,6  TickTileEntities: 0,0  Tracker: 0,0  Chunk: 0,0  Players: 1  

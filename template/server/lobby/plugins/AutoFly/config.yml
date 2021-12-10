@@ -1,4 +1,0 @@
-permission: 'hub.fly'
-byDefault: false
-message: ''
-# Set message: '' - to remove message on join.

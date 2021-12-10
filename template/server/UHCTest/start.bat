@@ -1,1 +1,0 @@
-java -Xmx25G -Xms12G -jar launcher-1.8.8-R0.1-SNAPSHOT.jar
